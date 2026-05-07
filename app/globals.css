@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 38 50% 97%;
+    --foreground: 20 30% 12%;
+    --card: 40 60% 99%;
+    --card-foreground: 20 30% 12%;
+    --popover: 40 60% 99%;
+    --popover-foreground: 20 30% 12%;
+    --primary: 8 75% 42%;
+    --primary-foreground: 40 60% 98%;
+    --secondary: 36 60% 92%;
+    --secondary-foreground: 20 30% 18%;
+    --muted: 36 40% 94%;
+    --muted-foreground: 20 15% 40%;
+    --accent: 38 85% 55%;
+    --accent-foreground: 20 30% 12%;
+    --destructive: 0 75% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 25% 86%;
+    --input: 30 25% 86%;
+    --ring: 8 75% 42%;
+    --radius: 0.75rem;
+  }
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(214, 96, 47, 0.08), transparent),
+    radial-gradient(900px 500px at -10% 30%, rgba(232, 168, 56, 0.10), transparent),
+    hsl(var(--background));
+}
+
+.font-display { font-family: 'Playfair Display', serif; }
+
+.spice-gradient { background: linear-gradient(135deg, #8B2E1F 0%, #C0392B 50%, #E67E22 100%); }
+.warm-gradient { background: linear-gradient(135deg, #FFF4E0 0%, #FBE2B8 100%); }
+.gold-text { background: linear-gradient(135deg, #B8860B, #FFD700, #B8860B); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.snack-card { transition: transform 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s; }
+.snack-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -15px rgba(139, 46, 31, 0.25); }
+
+.shimmer-border { position: relative; }
+.shimmer-border::before {
+  content: ''; position: absolute; inset: -2px; border-radius: inherit;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,215,0,0.5), transparent 70%);
+  background-size: 200% 100%; animation: shimmer 3s linear infinite; z-index: -1;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.float-anim { animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+.scrollbar-thin::-webkit-scrollbar { width: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: hsl(var(--primary) / 0.3); border-radius: 3px; }
