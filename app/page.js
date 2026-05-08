@@ -15,6 +15,14 @@ import Link from 'next/link'
 
 const CART_KEY = 'sev_cart_v1'
 
+// Transform Cloudinary URLs on-the-fly: w = max width, optimizes format & quality
+const cldUrl = (url, w = 600) => {
+  if (!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url
+  // avoid double-transforming
+  if (/\/upload\/(w_|c_|f_|q_|h_)/.test(url)) return url
+  return url.replace('/upload/', `/upload/w_${w},c_fill,f_auto,q_auto/`)
+}
+
 export default function App() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -183,7 +191,7 @@ export default function App() {
                     </div>
                   ) : cartItems.map(i => (
                     <div key={i.id} className="flex gap-3 p-3 bg-muted/40 rounded-lg">
-                      <img src={(i.images && i.images[0]) || i.image} alt={i.name} className="w-16 h-16 rounded-md object-cover" />
+                      <img src={cldUrl((i.images && i.images[0]) || i.image, 200)} alt={i.name} className="w-16 h-16 rounded-md object-cover" />
                       <div className="flex-1">
                         <div className="font-semibold text-sm">{i.name}</div>
                         <div className="text-xs text-muted-foreground">₹{i.price} • {i.weight}</div>
@@ -284,7 +292,7 @@ export default function App() {
                         className="absolute inset-0 transition-opacity duration-700"
                         style={{ opacity: i === heroIdx ? 1 : 0, pointerEvents: i === heroIdx ? 'auto' : 'none' }}
                       >
-                        <img src={(p.images && p.images[0]) || p.image} alt={p.name} className="w-full h-full object-cover" />
+                        <img src={cldUrl((p.images && p.images[0]) || p.image, 1000)} alt={p.name} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 text-white">
                           {p.badge && <Badge className="mb-2 bg-accent text-accent-foreground border-0">{p.badge}</Badge>}
@@ -345,7 +353,7 @@ export default function App() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
             {filtered.map(p => {
-              const img = (p.images && p.images[0]) || p.image
+              const img = cldUrl((p.images && p.images[0]) || p.image, 600)
               const hasMultiple = (p.images?.length || 0) > 1
               return (
                 <Card key={p.id} className="snack-card overflow-hidden border-border/60 bg-card cursor-pointer group" onClick={() => { setSelectedProduct(p); setGalleryIdx(0) }}>
@@ -399,7 +407,7 @@ export default function App() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             {products.slice(0, 4).map(p => (
-              <img key={p.id} src={(p.images && p.images[0]) || p.image} alt={p.name} className="w-full aspect-square object-cover rounded-2xl shadow-md" />
+              <img key={p.id} src={cldUrl((p.images && p.images[0]) || p.image, 400)} alt={p.name} className="w-full aspect-square object-cover rounded-2xl shadow-md" />
             ))}
           </div>
         </div>
@@ -441,7 +449,7 @@ export default function App() {
               <div className="bg-secondary">
                 <div className="relative aspect-square">
                   {(selectedProduct.images || []).map((src, i) => (
-                    <img key={i} src={src} alt={selectedProduct.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" style={{ opacity: i === galleryIdx ? 1 : 0 }} />
+                    <img key={i} src={cldUrl(src, 1200)} alt={selectedProduct.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" style={{ opacity: i === galleryIdx ? 1 : 0 }} />
                   ))}
                   {(selectedProduct.images?.length || 0) > 1 && (
                     <>
@@ -454,7 +462,7 @@ export default function App() {
                   <div className="flex gap-2 p-3 overflow-x-auto scrollbar-thin">
                     {selectedProduct.images.map((src, i) => (
                       <button key={i} onClick={() => setGalleryIdx(i)} className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition ${i === galleryIdx ? 'border-primary' : 'border-transparent opacity-70'}`}>
-                        <img src={src} alt="" className="w-full h-full object-cover" />
+                        <img src={cldUrl(src, 200)} alt="" className="w-full h-full object-cover" />
                       </button>
                     ))}
                   </div>

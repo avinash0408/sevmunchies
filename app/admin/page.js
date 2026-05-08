@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Lock, Plus, Pencil, Trash2, LogOut, Save, ArrowLeft, X, Star, ChevronUp, ChevronDown, Tag, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Lock, Plus, Pencil, Trash2, LogOut, Save, Upload, ArrowLeft, X, Star, ChevronUp, ChevronDown, Tag, ToggleLeft, ToggleRight } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -86,13 +86,44 @@ export default function AdminPage() {
     toast.success('Deleted'); loadAll(adminPwd)
   }
 
-  // multi-image handlers — Google Drive URL based
+  // multi-image handlers — Cloudinary upload + URL paste
   const [newImageUrl, setNewImageUrl] = useState('')
+  const [uploading, setUploading] = useState(false)
+
   const addImageFromUrl = () => {
     const url = newImageUrl.trim()
     if (!url) return
     setForm(f => ({ ...f, images: [...f.images, url] }))
     setNewImageUrl('')
+  }
+
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    setUploading(true)
+    let success = 0, fail = 0
+    for (const file of files) {
+      if (file.size > 10 * 1024 * 1024) { toast.error(`${file.name} > 10MB, skipped`); fail++; continue }
+      const fd = new FormData()
+      fd.append('file', file)
+      try {
+        const r = await fetch('/api/admin/upload', {
+          method: 'POST',
+          headers: { 'x-admin-password': adminPwd },
+          body: fd,
+        })
+        const d = await r.json()
+        if (!r.ok || !d.url) throw new Error(d.error || 'upload failed')
+        setForm(f => ({ ...f, images: [...f.images, d.url] }))
+        success++
+      } catch (err) {
+        console.error(err); fail++
+        toast.error(`${file.name}: ${err.message}`)
+      }
+    }
+    if (success) toast.success(`Uploaded ${success} image${success > 1 ? 's' : ''}`)
+    setUploading(false)
+    e.target.value = ''
   }
   const removeImage = (i) => setForm(f => ({ ...f, images: f.images.filter((_, idx) => idx !== i) }))
   const moveImage = (i, dir) => {
@@ -302,7 +333,7 @@ export default function AdminPage() {
               <Label htmlFor="featured" className="cursor-pointer">Featured (show in hero carousel)</Label>
             </div>
 
-            {/* IMAGE GALLERY MANAGER (Google Drive URLs) */}
+            {/* IMAGE GALLERY MANAGER (Cloudinary) */}
             <div>
               <Label>Images ({form.images.length})</Label>
               <div className="flex gap-2 mt-1">
@@ -310,12 +341,21 @@ export default function AdminPage() {
                   value={newImageUrl}
                   onChange={e => setNewImageUrl(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addImageFromUrl() } }}
-                  placeholder="Paste Google Drive share link or any image URL"
+                  placeholder="Paste any image URL"
+                  disabled={uploading}
                 />
-                <Button type="button" variant="outline" onClick={addImageFromUrl}><Plus className="w-4 h-4 mr-1" /> Add</Button>
+                <Button type="button" variant="outline" onClick={addImageFromUrl} disabled={uploading}>
+                  <Plus className="w-4 h-4" />
+                </Button>
+                <Button asChild type="button" className="spice-gradient text-white border-0" disabled={uploading}>
+                  <label className="cursor-pointer">
+                    {uploading ? <span className="text-xs">Uploading…</span> : <><Upload className="w-4 h-4 mr-1" /> Upload</>}
+                    <input type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
+                  </label>
+                </Button>
               </div>
               <div className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
-                <strong>Tip:</strong> Upload your image to Google Drive → right-click → <em>Share</em> → set access to <em>"Anyone with the link"</em> → copy the share link and paste it above. We'll auto-convert it to a direct image URL.
+                <strong>Recommended:</strong> Click <em>Upload</em> to send images to our CDN (auto-resized & optimized for fast delivery). Or paste any public image URL.
               </div>
               {form.images.length === 0 ? (
                 <div className="border-2 border-dashed rounded-lg p-6 text-center text-sm text-muted-foreground mt-2">No images yet.</div>

@@ -2,7 +2,7 @@
 
 A beautiful, mobile-friendly snack-selling website built with **Next.js 14**. Customers browse a product catalog, add to cart, apply coupons, and place orders directly via **WhatsApp** — no payment gateway needed.
 
-**No database required** — all data is stored in a single JSON file (`data/db.json`). Images are hosted on **Google Drive** (you paste share links and we auto-convert to direct image URLs).
+**No database required** — all data is stored in a single JSON file (`data/db.json`). Images are uploaded to **Cloudinary** (free tier) and served via their global CDN with automatic on-the-fly resizing & WebP optimization (94% smaller for thumbnails).
 
 Inspired by themalwastory.com, with a warm spice-shop theme.
 
@@ -25,7 +25,7 @@ Inspired by themalwastory.com, with a warm spice-shop theme.
 ### Admin side (`/admin`) — *hidden, accessed by URL only*
 - Password-gated (default: `admin123`, configurable)
 - **Products CRUD** — add / edit / delete
-- **Multiple Google Drive images per product** — paste share link, we auto-convert; reorder, set primary, delete individual images
+- **Multiple images per product** — upload from device (auto-uploaded to Cloudinary CDN with optimization) or paste any public image URL; reorder, set primary, delete individual images
 - **Featured toggle** — controls hero carousel inclusion
 - **Coupons CRUD** — create percent or flat-discount codes with min-order, enable/disable
 - **Settings** — change brand name, WhatsApp number, contact address, contact email, admin password
@@ -39,7 +39,7 @@ Inspired by themalwastory.com, with a warm spice-shop theme.
 | Framework   | Next.js 14 (App Router)                           |
 | UI          | Tailwind CSS + shadcn/ui + Lucide icons           |
 | Storage     | **JSON file** at `data/db.json` (no DB needed)    |
-| Images      | **Google Drive** share links (auto-normalized)    |
+| Images      | **Cloudinary CDN** with auto-resize/WebP via URL  |
 | Toasts      | Sonner                                            |
 | State       | React hooks + `localStorage` for cart persistence |
 
@@ -70,7 +70,16 @@ Create a `.env` file in the project root:
 ```env
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 CORS_ORIGINS=*
+
+# Cloudinary (sign up free at https://cloudinary.com)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_preset_name
 ```
+
+> Get your Cloudinary credentials from https://console.cloudinary.com/settings/api-keys after signing up (free tier: 25 GB storage + 25 GB bandwidth/month — easily enough for a small store).
 
 ### 4. Run the dev server
 
@@ -88,24 +97,37 @@ Open **http://localhost:3000** — `data/db.json` is auto-created with 5 sample 
 
 ---
 
-## 🖼️ How to Add Product Images (Google Drive)
+## 🖼️ How to Add Product Images (Cloudinary)
 
-1. Upload your image to Google Drive.
-2. Right-click the image → **Share** → set access to **"Anyone with the link"**.
-3. Click **Copy link** — you'll get a URL like:
-   ```
-   https://drive.google.com/file/d/1AbCDeFgHiJkLmNoPq/view?usp=sharing
-   ```
-4. In `/admin` → **Add/Edit Product** → paste that link in the **Images** field and click **Add**.
-5. We automatically convert it to a direct image URL:
-   ```
-   https://lh3.googleusercontent.com/d/1AbCDeFgHiJkLmNoPq
-   ```
-6. Add as many images as you want per product. Drag-reorder, set primary, or remove any.
+You have two ways to add images in `/admin`:
 
-> ⚠️ **The Drive file MUST be set to "Anyone with the link"**, otherwise it won't display publicly.
+### **Option A — Upload from your device** ⭐ Recommended
+1. In the product form, click the **Upload** button.
+2. Pick one or many images from your computer/phone (each up to 10 MB).
+3. We send them to **Cloudinary** which:
+   - Stores the original on their global CDN
+   - Automatically generates optimized variants (WebP, AVIF, resized) on-the-fly
+   - Returns a permanent URL we save to your product
+4. Customers see images at **400 px / 20 KB** for thumbnails and **1200 px / ~150 KB** for galleries — even though the original is 2 MB+. **94% bandwidth savings.**
 
-You can also paste any other public image URL (CDN, your own host, etc.) — those are stored as-is.
+### **Option B — Paste any public image URL**
+- Use the URL field in the same form for external images (e.g. CDN you already use). Stored as-is.
+
+### How transformations work
+We use Cloudinary's URL-based transformations. A stored image:
+```
+https://res.cloudinary.com/<cloud>/image/upload/v123/sevmunchies/abc.jpg
+```
+is auto-rewritten on the customer side as:
+```
+https://res.cloudinary.com/<cloud>/image/upload/w_600,c_fill,f_auto,q_auto/v123/sevmunchies/abc.jpg
+```
+- `w_600` → resize to 600 px wide
+- `f_auto` → serve WebP / AVIF if browser supports
+- `q_auto` → automatic quality optimization
+- `c_fill` → crop-to-fill aspect ratio
+
+The helper lives in `app/page.js` as `cldUrl(url, width)`.
 
 ---
 
@@ -185,6 +207,7 @@ All API routes are under `/api/*`. Mutations require the header
 | POST   | `/api/products`           | admin | Create product                       |
 | PUT    | `/api/products/:id`       | admin | Update product                       |
 | DELETE | `/api/products/:id`       | admin | Delete product                       |
+| POST   | `/api/admin/upload`       | admin | **Multipart upload → Cloudinary**, returns `{ url, public_id, ... }` |
 | GET    | `/api/settings`           | —     | Public settings (brand, whatsapp, …) |
 | POST   | `/api/admin/login`        | —     | Validate admin password              |
 | POST   | `/api/admin/settings`     | admin | Update brand/whatsapp/password/…     |
