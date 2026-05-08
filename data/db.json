@@ -1,0 +1,102 @@
+{
+  "products": [
+    {
+      "id": "058c1a33-0181-40d1-9d01-da16f1d21c51",
+      "name": "Masala Papdi",
+      "title": "Tangy & Crispy Delight",
+      "description": "Hand-rolled crispy papdi tossed in a tangy blend of roasted spices. Gluten-free, no preservatives — just pure crunch.",
+      "price": 180,
+      "weight": "250 gms",
+      "images": [
+        "https://customer-assets.emergentagent.com/job_a68be4b4-6dd8-4c95-bffb-2ba39cff9c7a/artifacts/vg2h435r_WhatsApp%20Image%202026-05-06%20at%2023.04.57%20%282%29.jpeg",
+        "https://customer-assets.emergentagent.com/job_a68be4b4-6dd8-4c95-bffb-2ba39cff9c7a/artifacts/zu4kk6d3_WhatsApp%20Image%202026-05-06%20at%2023.12.07%20%282%29.jpeg"
+      ],
+      "badge": "Bestseller",
+      "featured": true,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    },
+    {
+      "id": "1daf940b-4b6a-40e8-9860-19b7fba222ae",
+      "name": "Garlic Sev",
+      "title": "Zesty Garlic Treat",
+      "description": "Crunchy gram-flour sev infused with bold roasted garlic. The perfect chai companion with a punch of flavour.",
+      "price": 200,
+      "weight": "250 gms",
+      "images": [
+        "https://customer-assets.emergentagent.com/job_a68be4b4-6dd8-4c95-bffb-2ba39cff9c7a/artifacts/mslefe51_WhatsApp%20Image%202026-05-06%20at%2023.12.07.jpeg"
+      ],
+      "badge": "Spicy",
+      "featured": true,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    },
+    {
+      "id": "4807f61c-1053-40b4-bb8f-c1783cdfaca8",
+      "name": "Laung Sev",
+      "title": "Aromatic Clove Punch",
+      "description": "A traditional sev with a warming hint of clove and exotic spices. Slow-cooked and irresistibly aromatic.",
+      "price": 220,
+      "weight": "250 gms",
+      "images": [
+        "https://customer-assets.emergentagent.com/job_a68be4b4-6dd8-4c95-bffb-2ba39cff9c7a/artifacts/ypejqw0k_WhatsApp%20Image%202026-05-07%20at%2000.14.41%20%282%29.jpeg"
+      ],
+      "badge": "New",
+      "featured": true,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    },
+    {
+      "id": "47f5e7d3-4f99-4838-99b3-240bf3a7bd93",
+      "name": "Masala Papdi Pack",
+      "title": "Family Sharing Pack",
+      "description": "Our signature Masala Papdi in a handy share-pack. Perfect for tea-time, parties, and movie nights with the family.",
+      "price": 160,
+      "weight": "250 gms",
+      "images": [
+        "https://customer-assets.emergentagent.com/job_a68be4b4-6dd8-4c95-bffb-2ba39cff9c7a/artifacts/zu4kk6d3_WhatsApp%20Image%202026-05-06%20at%2023.12.07%20%282%29.jpeg"
+      ],
+      "badge": "",
+      "featured": false,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    },
+    {
+      "id": "42eb1fa8-33c0-4289-9c27-5d9b66ba91d7",
+      "name": "Pepper Sticks",
+      "title": "Fiery Black Pepper Crunch",
+      "description": "Long, crispy sticks tossed with cracked black pepper and red chilli flakes. Smoky, fiery, dangerously addictive.",
+      "price": 190,
+      "weight": "250 gms",
+      "images": [
+        "https://customer-assets.emergentagent.com/job_a68be4b4-6dd8-4c95-bffb-2ba39cff9c7a/artifacts/mpay0icf_WhatsApp%20Image%202026-05-06%20at%2023.04.57%20%286%29.jpeg"
+      ],
+      "badge": "Hot",
+      "featured": true,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    }
+  ],
+  "coupons": [
+    {
+      "id": "9d0398c7-5c5a-4620-9b82-879c534b5732",
+      "code": "WELCOME10",
+      "type": "percent",
+      "value": 10,
+      "minOrder": 300,
+      "active": true,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    },
+    {
+      "id": "11ab70a6-0cb0-4930-9c45-eb71d791067d",
+      "code": "FLAT50",
+      "type": "flat",
+      "value": 50,
+      "minOrder": 500,
+      "active": true,
+      "createdAt": "2026-05-08T19:42:01.918Z"
+    }
+  ],
+  "settings": {
+    "password": "admin123",
+    "whatsapp": "916303520089",
+    "brand": "SevMunchies",
+    "address": "Hyderabad, India",
+    "email": "orders@sevmunchies.in"
+  }
+}
