@@ -184,7 +184,7 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl">
           <CardHeader>
-            <div className="w-14 h-14 rounded-full spice-gradient mx-auto flex items-center justify-center mb-3">
+            <div className="w-14 h-14 rounded-full orange-gradient mx-auto flex items-center justify-center mb-3">
               <Lock className="w-7 h-7 text-white" />
             </div>
             <CardTitle className="text-center font-display text-2xl">Admin Access</CardTitle>
@@ -194,7 +194,7 @@ export default function AdminPage() {
               <Label>Password</Label>
               <Input type="password" value={pwd} onChange={e => setPwd(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()} placeholder="Enter admin password" />
             </div>
-            <Button onClick={login} className="w-full spice-gradient text-white border-0 h-11">Login</Button>
+            <Button onClick={login} className="w-full orange-gradient text-white border-0 h-11 rounded-full">Login</Button>
             <Link href="/" className="text-xs text-center text-muted-foreground hover:text-primary block">← Back to shop</Link>
           </CardContent>
         </Card>
@@ -207,8 +207,8 @@ export default function AdminPage() {
       <nav className="border-b bg-card sticky top-0 z-30">
         <div className="container flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <Link href="/" className="text-muted-foreground hover:text-primary"><ArrowLeft className="w-4 h-4" /></Link>
-            <div className="font-display font-bold text-xl">Admin Panel</div>
+            <Link href="/" className="hover:opacity-70" style={{ color: '#1c3380' }}><ArrowLeft className="w-4 h-4" /></Link>
+            <div className="font-display font-bold text-xl" style={{ color: '#1c3380' }}>Admin Panel</div>
           </div>
           <Button variant="ghost" size="sm" onClick={logout}><LogOut className="w-4 h-4 mr-2" /> Logout</Button>
         </div>
@@ -226,7 +226,7 @@ export default function AdminPage() {
           <TabsContent value="products">
             <div className="flex justify-between items-center mb-5">
               <h2 className="font-display text-2xl font-bold">Manage Products</h2>
-              <Button onClick={openNew} className="spice-gradient text-white border-0"><Plus className="w-4 h-4 mr-2" /> Add Product</Button>
+              <Button onClick={openNew} className="orange-gradient text-white border-0"><Plus className="w-4 h-4 mr-2" /> Add Product</Button>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map(p => (
@@ -261,7 +261,7 @@ export default function AdminPage() {
           <TabsContent value="coupons">
             <div className="flex justify-between items-center mb-5">
               <h2 className="font-display text-2xl font-bold">Discount Coupons</h2>
-              <Button onClick={openNewCoupon} className="spice-gradient text-white border-0"><Plus className="w-4 h-4 mr-2" /> Add Coupon</Button>
+              <Button onClick={openNewCoupon} className="orange-gradient text-white border-0"><Plus className="w-4 h-4 mr-2" /> Add Coupon</Button>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {coupons.length === 0 && <div className="col-span-full text-center py-12 text-muted-foreground">No coupons yet. Create one!</div>}
@@ -273,7 +273,7 @@ export default function AdminPage() {
                         <Tag className="w-4 h-4 text-primary" />
                         <span className="font-mono font-bold text-lg">{c.code}</span>
                       </div>
-                      <Badge variant={c.active ? 'default' : 'secondary'} className={c.active ? 'spice-gradient text-white border-0' : ''}>
+                      <Badge variant={c.active ? 'default' : 'secondary'} className={c.active ? 'orange-gradient text-white border-0' : ''}>
                         {c.active ? 'Active' : 'Disabled'}
                       </Badge>
                     </div>
@@ -305,7 +305,7 @@ export default function AdminPage() {
                 <div><Label>Contact Address</Label><Textarea value={settings.address} onChange={e => setSettings(s => ({ ...s, address: e.target.value }))} rows={2} /></div>
                 <div><Label>Contact Email</Label><Input value={settings.email} onChange={e => setSettings(s => ({ ...s, email: e.target.value }))} /></div>
                 <div><Label>New Admin Password (leave blank to keep)</Label><Input type="password" value={settings.password} onChange={e => setSettings(s => ({ ...s, password: e.target.value }))} placeholder="••••••••" /></div>
-                <Button onClick={saveSettings} className="spice-gradient text-white border-0"><Save className="w-4 h-4 mr-2" /> Save Settings</Button>
+                <Button onClick={saveSettings} className="orange-gradient text-white border-0"><Save className="w-4 h-4 mr-2" /> Save Settings</Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -347,7 +347,7 @@ export default function AdminPage() {
                 <Button type="button" variant="outline" onClick={addImageFromUrl} disabled={uploading}>
                   <Plus className="w-4 h-4" />
                 </Button>
-                <Button asChild type="button" className="spice-gradient text-white border-0" disabled={uploading}>
+                <Button asChild type="button" className="orange-gradient text-white border-0" disabled={uploading}>
                   <label className="cursor-pointer">
                     {uploading ? <span className="text-xs">Uploading…</span> : <><Upload className="w-4 h-4 mr-1" /> Upload</>}
                     <input type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" disabled={uploading} />
@@ -386,7 +386,7 @@ export default function AdminPage() {
               <p className="text-[11px] text-muted-foreground mt-2">First image is the primary thumbnail. Hover any image to reorder, set primary, or remove.</p>
             </div>
 
-            <Button onClick={saveProduct} className="w-full spice-gradient text-white border-0 h-11">
+            <Button onClick={saveProduct} className="w-full orange-gradient text-white border-0 h-11">
               <Save className="w-4 h-4 mr-2" /> {editing ? 'Update' : 'Add'} Product
             </Button>
           </div>
@@ -417,7 +417,7 @@ export default function AdminPage() {
               <Switch checked={couponForm.active} onCheckedChange={v => setCouponForm(f => ({ ...f, active: v }))} id="active" />
               <Label htmlFor="active" className="cursor-pointer">Active</Label>
             </div>
-            <Button onClick={saveCoupon} className="w-full spice-gradient text-white border-0 h-11"><Save className="w-4 h-4 mr-2" /> {couponEditing ? 'Update' : 'Add'} Coupon</Button>
+            <Button onClick={saveCoupon} className="w-full orange-gradient text-white border-0 h-11"><Save className="w-4 h-4 mr-2" /> {couponEditing ? 'Update' : 'Add'} Coupon</Button>
           </div>
         </DialogContent>
       </Dialog>

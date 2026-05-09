@@ -9,16 +9,16 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from '@/components/ui/sheet'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { ShoppingCart, Plus, Minus, Trash2, MessageCircle, Sparkles, Leaf, Award, Truck, Search, ChevronLeft, ChevronRight, Tag, Check, X } from 'lucide-react'
+import { ShoppingCart, Plus, Minus, Trash2, MessageCircle, Sparkles, Leaf, Award, Truck, Search, ChevronLeft, ChevronRight, Tag, X, Star } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
 const CART_KEY = 'sev_cart_v1'
+const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,g_north,w_220,h_220,y_30/c_fill,w_200,h_200,f_auto,q_auto/v1778306538/sevmunchies/file_in5vdw.png'
 
-// Transform Cloudinary URLs on-the-fly: w = max width, optimizes format & quality
+// Cloudinary on-the-fly transform
 const cldUrl = (url, w = 600) => {
   if (!url || !url.includes('res.cloudinary.com') || !url.includes('/upload/')) return url
-  // avoid double-transforming
   if (/\/upload\/(w_|c_|f_|q_|h_)/.test(url)) return url
   return url.replace('/upload/', `/upload/w_${w},c_fill,f_auto,q_auto/`)
 }
@@ -28,7 +28,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [cart, setCart] = useState({})
   const [whatsapp, setWhatsapp] = useState('916303520089')
-  const [brand, setBrand] = useState('SevMunchies')
+  const [brand, setBrand] = useState('Famous Namkeen')
   const [search, setSearch] = useState('')
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
@@ -52,13 +52,11 @@ export default function App() {
 
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem(CART_KEY, JSON.stringify(cart)) }, [cart])
 
-  // featured products for hero carousel
   const featured = useMemo(() => {
     const f = products.filter(p => p.featured)
     return f.length > 0 ? f : products.slice(0, 3)
   }, [products])
 
-  // auto-rotate hero
   useEffect(() => {
     if (featured.length < 2) return
     const t = setInterval(() => setHeroIdx(i => (i + 1) % featured.length), 4500)
@@ -91,7 +89,6 @@ export default function App() {
     return products.filter(p => (p.name + ' ' + p.title + ' ' + p.description).toLowerCase().includes(q))
   }, [products, search])
 
-  // re-validate coupon if subtotal changes
   useEffect(() => {
     if (!appliedCoupon) return
     if (cartSubtotal === 0) { setAppliedCoupon(null); return }
@@ -147,41 +144,43 @@ export default function App() {
     setCart({}); setName(''); setPhone(''); setAddress(''); setNotes(''); setAppliedCoupon(null)
   }
 
-  // gallery navigation
   const prevImg = () => { const len = selectedProduct?.images?.length || 1; setGalleryIdx(i => (i - 1 + len) % len) }
   const nextImg = () => { const len = selectedProduct?.images?.length || 1; setGalleryIdx(i => (i + 1) % len) }
 
-  const heroProduct = featured[heroIdx]
-
   return (
-    <div className="min-h-screen pb-20 md:pb-0">
-      {/* NAV */}
-      <nav className="sticky top-0 z-40 backdrop-blur-md bg-background/80 border-b border-border/60">
+    <div className="min-h-screen pb-20 md:pb-0 cream-bg">
+      {/* Gold strip top */}
+      <div className="gold-strip"></div>
+
+      {/* NAV - cream like reference */}
+      <nav className="sticky top-0 z-40 backdrop-blur-md bg-[#FFF8EE]/95 border-b border-border/60">
         <div className="container flex items-center justify-between h-16 sm:h-20">
-          <a href="#" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full spice-gradient flex items-center justify-center text-white shadow-lg">
-              <Sparkles className="w-5 h-5" />
+          <a href="#" className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-accent/30 shadow-md flex-shrink-0">
+              <img src={BRAND_LOGO} alt={brand} className="w-full h-full object-cover" />
             </div>
             <div>
-              <div className="font-display font-bold text-lg sm:text-xl leading-none">{brand}</div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase">Crispy • Tangy • Authentic</div>
+              <div className="font-display font-bold text-lg sm:text-xl leading-tight" style={{ color: '#1c3380' }}>
+                <span className="orange-text">{brand.split(' ')[0] || brand}</span>{brand.split(' ').slice(1).join(' ') ? ' ' + brand.split(' ').slice(1).join(' ') : ''}
+              </div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase">Premium Indian Snacks</div>
             </div>
           </a>
           <div className="flex items-center gap-3 sm:gap-5">
-            <a href="#shop" className="hidden md:inline text-sm text-muted-foreground hover:text-primary transition">Shop</a>
-            <Link href="/about" className="hidden md:inline text-sm text-muted-foreground hover:text-primary transition">About</Link>
+            <a href="#shop" className="hidden md:inline text-sm font-medium hover:text-primary transition" style={{ color: '#1c3380' }}>Shop</a>
+            <Link href="/about" className="hidden md:inline text-sm font-medium hover:text-primary transition" style={{ color: '#1c3380' }}>About</Link>
             <Sheet open={cartOpen} onOpenChange={setCartOpen}>
               <SheetTrigger asChild>
-                <Button variant="default" className="relative spice-gradient text-white border-0 shadow-md hover:opacity-90">
+                <Button className="relative wa-gradient text-white border-0 shadow-md hover:opacity-90 rounded-full">
                   <ShoppingCart className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Cart</span>
                   {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow">{cartCount}</span>
+                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow">{cartCount}</span>
                   )}
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-full sm:max-w-md flex flex-col">
-                <SheetHeader><SheetTitle className="font-display text-2xl">Your Cart</SheetTitle></SheetHeader>
+                <SheetHeader><SheetTitle className="font-display text-2xl" style={{ color: '#1c3380' }}>Your Cart</SheetTitle></SheetHeader>
                 <div className="flex-1 overflow-y-auto scrollbar-thin py-4 space-y-3">
                   {cartItems.length === 0 ? (
                     <div className="text-center py-16 text-muted-foreground">
@@ -208,7 +207,6 @@ export default function App() {
                 </div>
                 {cartItems.length > 0 && (
                   <SheetFooter className="flex-col gap-3 sm:flex-col">
-                    {/* Coupon */}
                     <div className="w-full">
                       {appliedCoupon ? (
                         <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
@@ -232,10 +230,10 @@ export default function App() {
                       {discount > 0 && <div className="flex justify-between text-green-700"><span>Discount</span><span>−₹{discount}</span></div>}
                       <div className="flex justify-between items-center pt-1">
                         <span className="font-semibold">Total</span>
-                        <span className="font-display text-2xl font-bold">₹{cartTotal}</span>
+                        <span className="font-display text-2xl font-bold" style={{ color: '#1c3380' }}>₹{cartTotal}</span>
                       </div>
                     </div>
-                    <Button onClick={() => setCheckoutOpen(true)} className="w-full bg-green-600 hover:bg-green-700 text-white h-12 text-base">
+                    <Button onClick={() => setCheckoutOpen(true)} className="w-full wa-gradient text-white border-0 h-12 text-base rounded-full">
                       <MessageCircle className="w-5 h-5 mr-2" /> Checkout via WhatsApp
                     </Button>
                   </SheetFooter>
@@ -246,46 +244,45 @@ export default function App() {
         </div>
       </nav>
 
-      {/* HERO with CAROUSEL */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 opacity-40" style={{ backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(214,96,47,0.18), transparent 50%), radial-gradient(circle at 80% 70%, rgba(232,168,56,0.18), transparent 50%)' }} />
-        <div className="container py-12 md:py-20 lg:py-24 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div>
-            <Badge variant="secondary" className="mb-4 bg-accent/20 text-accent-foreground border-accent/30">
-              <Leaf className="w-3 h-3 mr-1" /> Made fresh • No preservatives
+      {/* HERO — NAVY background like reference */}
+      <section className="relative navy-gradient navy-pattern overflow-hidden">
+        <div className="container py-12 md:py-20 lg:py-24 grid md:grid-cols-2 gap-8 md:gap-12 items-center relative">
+          <div className="text-white">
+            <Badge className="mb-5 bg-white/10 border border-accent/40 text-accent hover:bg-white/10 px-4 py-1.5 rounded-full">
+              <Sparkles className="w-3 h-3 mr-1.5" /> Premium Indian Namkeen
             </Badge>
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-5">
-              Crispy bites,<br />
-              <span className="gold-text">timeless taste.</span>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] mb-5 text-white">
+              Authentic<br />
+              <span className="gold-text">Crunchy Taste</span><br />
+              Delivered Fresh
             </h1>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-xl mb-7">
-              Authentic homemade namkeen and snacks, crafted in small batches with traditional spices. From our kitchen to your tea-table.
+            <p className="text-base sm:text-lg text-white/80 max-w-xl mb-8">
+              Traditional flavors crafted with premium quality ingredients and an unforgettable crunch in every bite.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" className="spice-gradient text-white border-0 h-12 px-7 text-base shadow-lg hover:opacity-90" onClick={() => document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' })}>
-                Shop Snacks
+              <Button size="lg" className="orange-gradient text-white border-0 h-12 px-7 text-base shadow-xl hover:opacity-90 rounded-full" onClick={() => document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' })}>
+                Explore Products →
               </Button>
-              <Button size="lg" variant="outline" className="h-12 px-7 text-base" onClick={() => window.open(`https://wa.me/${whatsapp}`, '_blank')}>
-                <MessageCircle className="w-4 h-4 mr-2" /> Chat on WhatsApp
+              <Button size="lg" className="wa-gradient text-white border-0 h-12 px-7 text-base shadow-xl hover:opacity-90 rounded-full" onClick={() => window.open(`https://wa.me/${whatsapp}`, '_blank')}>
+                <MessageCircle className="w-4 h-4 mr-2" /> Order on WhatsApp
               </Button>
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-10 max-w-md">
-              {[{ icon: Award, t: 'Hand-crafted' }, { icon: Leaf, t: 'No chemicals' }, { icon: Truck, t: 'Fresh delivery' }].map(({ icon: I, t }, i) => (
-                <div key={i} className="flex flex-col items-center text-center gap-1">
-                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center"><I className="w-5 h-5 text-primary" /></div>
-                  <span className="text-xs font-medium text-muted-foreground">{t}</span>
+            <div className="grid grid-cols-3 gap-6 mt-12 max-w-md">
+              {[{ n: '10K+', t: 'Happy Customers' }, { n: '50+', t: 'Years of Recipe' }, { n: '100%', t: 'Natural' }].map(({ n, t }, i) => (
+                <div key={i}>
+                  <div className="font-display text-3xl md:text-4xl font-bold gold-text">{n}</div>
+                  <div className="text-xs text-white/70 mt-1">{t}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* HERO CAROUSEL */}
+          {/* Hero carousel — featured products */}
           <div className="relative">
-            <div className="absolute -inset-6 spice-gradient rounded-full blur-3xl opacity-25" />
             <div className="relative aspect-square max-w-md mx-auto">
               {featured.length > 0 && (
                 <>
-                  <div className="relative w-full h-full overflow-hidden rounded-3xl shadow-2xl">
+                  <div className="relative w-full h-full overflow-hidden rounded-3xl shadow-2xl ring-4 ring-accent/20">
                     {featured.map((p, i) => (
                       <div
                         key={p.id}
@@ -293,14 +290,14 @@ export default function App() {
                         style={{ opacity: i === heroIdx ? 1 : 0, pointerEvents: i === heroIdx ? 'auto' : 'none' }}
                       >
                         <img src={cldUrl((p.images && p.images[0]) || p.image, 1000)} alt={p.name} className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 text-white">
-                          {p.badge && <Badge className="mb-2 bg-accent text-accent-foreground border-0">{p.badge}</Badge>}
+                          {p.badge && <Badge className="mb-2 orange-gradient text-white border-0">{p.badge}</Badge>}
                           <div className="font-display text-2xl sm:text-3xl font-bold">{p.name}</div>
                           <div className="text-sm opacity-90 mb-2">{p.title}</div>
                           <div className="flex items-center justify-between">
-                            <div className="text-2xl font-bold">₹{p.price}</div>
-                            <Button size="sm" className="bg-white text-primary hover:bg-white/90" onClick={() => { setSelectedProduct(p); setGalleryIdx(0) }}>
+                            <div className="text-2xl font-bold gold-text">₹{p.price}</div>
+                            <Button size="sm" className="orange-gradient text-white border-0 rounded-full px-4" onClick={() => { setSelectedProduct(p); setGalleryIdx(0) }}>
                               View
                             </Button>
                           </div>
@@ -310,100 +307,142 @@ export default function App() {
                   </div>
                   {featured.length > 1 && (
                     <>
-                      <Button size="icon" variant="secondary" className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full shadow-lg h-10 w-10" onClick={() => setHeroIdx(i => (i - 1 + featured.length) % featured.length)}>
+                      <Button size="icon" className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full shadow-lg h-10 w-10 bg-white text-secondary hover:bg-white/90" onClick={() => setHeroIdx(i => (i - 1 + featured.length) % featured.length)}>
                         <ChevronLeft className="w-5 h-5" />
                       </Button>
-                      <Button size="icon" variant="secondary" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full shadow-lg h-10 w-10" onClick={() => setHeroIdx(i => (i + 1) % featured.length)}>
+                      <Button size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full shadow-lg h-10 w-10 bg-white text-secondary hover:bg-white/90" onClick={() => setHeroIdx(i => (i + 1) % featured.length)}>
                         <ChevronRight className="w-5 h-5" />
                       </Button>
                       <div className="absolute -bottom-6 left-0 right-0 flex justify-center gap-2">
                         {featured.map((_, i) => (
-                          <button key={i} onClick={() => setHeroIdx(i)} className={`h-2 rounded-full transition-all ${i === heroIdx ? 'w-8 bg-primary' : 'w-2 bg-primary/30'}`} />
+                          <button key={i} onClick={() => setHeroIdx(i)} className={`h-2 rounded-full transition-all ${i === heroIdx ? 'w-8 bg-accent' : 'w-2 bg-white/30'}`} />
                         ))}
                       </div>
                     </>
                   )}
                 </>
               )}
+              {/* Reviews badge floating */}
+              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-3 flex items-center gap-3 border-2 border-accent/30 hidden sm:flex">
+                <div className="w-10 h-10 rounded-full orange-gradient flex items-center justify-center">
+                  <Star className="w-5 h-5 text-white fill-white" />
+                </div>
+                <div>
+                  <div className="font-display text-lg font-bold" style={{ color: '#1c3380' }}>4.9 / 5</div>
+                  <div className="text-[11px] text-muted-foreground">From 2,400+ reviews</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SHOP */}
-      <section id="shop" className="container py-12 md:py-16">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <Badge className="mb-2 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">Our Collection</Badge>
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold">Pick your <span className="gold-text">favourite</span></h2>
-            <p className="text-muted-foreground mt-2">Tap any snack to view details, then add to cart.</p>
-          </div>
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search snacks…" className="pl-9 bg-card" />
-          </div>
-        </div>
+      {/* Gold strip separator */}
+      <div className="gold-strip"></div>
 
-        {loading ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/4] rounded-2xl bg-muted/50 animate-pulse" />)}
+      {/* SHOP — cream background */}
+      <section id="shop" className="cream-bg">
+        <div className="container py-14 md:py-20">
+          <div className="text-center mb-10">
+            <Badge className="mb-3 bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/10">Bestsellers</Badge>
+            <h2 className="font-display text-3xl md:text-5xl font-bold" style={{ color: '#1c3380' }}>Our Signature <span className="orange-text">Snacks</span></h2>
+            <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Hand-crafted in small batches for unmatched freshness and crunch.</p>
+            <div className="relative max-w-sm mx-auto mt-6">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search snacks…" className="pl-9 bg-card border-secondary/20 rounded-full" />
+            </div>
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20 text-muted-foreground">No snacks match your search.</div>
-        ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
-            {filtered.map(p => {
-              const img = cldUrl((p.images && p.images[0]) || p.image, 600)
-              const hasMultiple = (p.images?.length || 0) > 1
-              return (
-                <Card key={p.id} className="snack-card overflow-hidden border-border/60 bg-card cursor-pointer group" onClick={() => { setSelectedProduct(p); setGalleryIdx(0) }}>
-                  <div className="relative aspect-square overflow-hidden bg-secondary">
-                    <img src={img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    {p.badge && <Badge className="absolute top-3 left-3 spice-gradient text-white border-0 shadow">{p.badge}</Badge>}
-                    {hasMultiple && (
-                      <div className="absolute top-3 right-3 bg-black/60 text-white text-xs px-2 py-0.5 rounded-full backdrop-blur-sm">
-                        +{p.images.length - 1}
-                      </div>
-                    )}
-                    <Button size="icon" className="absolute bottom-3 right-3 spice-gradient text-white border-0 shadow-lg opacity-0 group-hover:opacity-100 transition" onClick={(e) => { e.stopPropagation(); addToCart(p) }}>
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="font-display font-bold text-lg leading-tight">{p.name}</div>
-                    <div className="text-xs text-muted-foreground mb-2">{p.title}</div>
-                    <div className="flex items-center justify-between mt-3">
-                      <div>
-                        <span className="font-bold text-xl">₹{p.price}</span>
-                        {p.weight && <span className="text-xs text-muted-foreground ml-2">{p.weight}</span>}
-                      </div>
-                      <Button size="sm" variant="outline" className="text-xs" onClick={(e) => { e.stopPropagation(); addToCart(p) }}>
-                        <Plus className="w-3 h-3 mr-1" /> Add
+
+          {loading ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-[3/4] rounded-2xl bg-muted/50 animate-pulse" />)}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">No snacks match your search.</div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-6">
+              {filtered.map(p => {
+                const img = cldUrl((p.images && p.images[0]) || p.image, 600)
+                const hasMultiple = (p.images?.length || 0) > 1
+                return (
+                  <Card key={p.id} className="snack-card overflow-hidden border-border/60 bg-card cursor-pointer group rounded-2xl" onClick={() => { setSelectedProduct(p); setGalleryIdx(0) }}>
+                    <div className="relative aspect-square overflow-hidden bg-secondary/5">
+                      <img src={img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      {p.badge && <Badge className="absolute top-3 left-3 orange-gradient text-white border-0 shadow">{p.badge}</Badge>}
+                      {hasMultiple && (
+                        <div className="absolute top-3 right-3 bg-secondary/80 text-white text-xs px-2 py-0.5 rounded-full backdrop-blur-sm">
+                          +{p.images.length - 1}
+                        </div>
+                      )}
+                      <Button size="icon" className="absolute bottom-3 right-3 orange-gradient text-white border-0 shadow-lg opacity-0 group-hover:opacity-100 transition rounded-full" onClick={(e) => { e.stopPropagation(); addToCart(p) }}>
+                        <Plus className="w-4 h-4" />
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        )}
+                    <CardContent className="p-4">
+                      <div className="font-display font-bold text-lg leading-tight" style={{ color: '#1c3380' }}>{p.name}</div>
+                      <div className="text-xs text-muted-foreground mb-2">{p.title}</div>
+                      <div className="flex items-center justify-between mt-3">
+                        <div>
+                          <span className="font-bold text-xl" style={{ color: '#1c3380' }}>₹{p.price}</span>
+                          {p.weight && <span className="text-xs text-muted-foreground ml-2">{p.weight}</span>}
+                        </div>
+                        <Button size="sm" className="orange-gradient text-white border-0 rounded-full" onClick={(e) => { e.stopPropagation(); addToCart(p) }}>
+                          <Plus className="w-3 h-3 mr-1" /> Add
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </section>
 
-      {/* STORY */}
-      <section className="warm-gradient py-16 md:py-24 mt-8">
+      {/* WHY CHOOSE US — navy section */}
+      <section className="navy-gradient navy-pattern relative">
+        <div className="container py-14 md:py-20 relative">
+          <div className="text-center mb-12">
+            <Badge className="mb-3 bg-white/10 text-accent border-accent/40 hover:bg-white/10">The Famous Promise</Badge>
+            <h2 className="font-display text-3xl md:text-5xl font-bold text-white">Why Choose <span className="gold-text">Us</span></h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: Award, title: 'Authentic Taste', text: 'Heritage recipes from generations of mastery.' },
+              { icon: Sparkles, title: 'Freshly Prepared', text: 'Every batch made fresh and packed at peak crunch.' },
+              { icon: Leaf, title: 'Premium Ingredients', text: 'Hand-picked spices and finest gram flour.' },
+              { icon: Truck, title: 'No Preservatives', text: 'Pure flavor — nothing artificial, ever.' },
+            ].map(({ icon: I, title, text }, i) => (
+              <div key={i} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                <div className="w-12 h-12 rounded-full gold-gradient flex items-center justify-center mb-4">
+                  <I className="w-6 h-6" style={{ color: '#1c3380' }} />
+                </div>
+                <h3 className="font-display text-lg font-bold text-white mb-1">{title}</h3>
+                <p className="text-sm text-white/70">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gold strip */}
+      <div className="gold-strip"></div>
+
+      {/* STORY — cream */}
+      <section className="warm-bg py-14 md:py-20">
         <div className="container grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <Badge variant="secondary" className="mb-3">Our Story</Badge>
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">A pinch of tradition, a handful of love.</h2>
+            <Badge className="mb-3 bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/10">Our Story</Badge>
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4" style={{ color: '#1c3380' }}>From the heart of <span className="orange-text">Ratlam</span></h2>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
-              Every batch of {brand} is rolled, fried, and seasoned by hand using recipes passed down through generations. We use only pure ingredients — no chemicals, no shortcuts — just honest, soul-warming snacks.
+              What began as a small family kitchen in the spice-laden lanes of Ratlam is now a beloved name in households across India. Every packet of {brand} carries the warmth of a tradition kept alive — one crunchy bite at a time.
             </p>
             <div className="grid grid-cols-3 gap-4 mt-8">
-              <div><div className="font-display text-3xl font-bold gold-text">15+</div><div className="text-xs text-muted-foreground">Heritage recipes</div></div>
-              <div><div className="font-display text-3xl font-bold gold-text">100%</div><div className="text-xs text-muted-foreground">Natural</div></div>
-              <div><div className="font-display text-3xl font-bold gold-text">10k+</div><div className="text-xs text-muted-foreground">Happy customers</div></div>
+              <div><div className="font-display text-3xl font-bold" style={{ color: '#1c3380' }}>15+</div><div className="text-xs text-muted-foreground">Heritage recipes</div></div>
+              <div><div className="font-display text-3xl font-bold" style={{ color: '#1c3380' }}>100%</div><div className="text-xs text-muted-foreground">Natural</div></div>
+              <div><div className="font-display text-3xl font-bold" style={{ color: '#1c3380' }}>10k+</div><div className="text-xs text-muted-foreground">Customers</div></div>
             </div>
-            <Link href="/about"><Button variant="outline" className="mt-6">Read our story →</Button></Link>
+            <Link href="/about"><Button className="mt-6 orange-gradient text-white border-0 rounded-full px-6">Read our story →</Button></Link>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {products.slice(0, 4).map(p => (
@@ -413,10 +452,27 @@ export default function App() {
         </div>
       </section>
 
+      {/* CTA — navy */}
+      <section className="navy-gradient navy-pattern relative">
+        <div className="container py-14 md:py-20 text-center relative">
+          <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">Ready to taste <span className="gold-text">tradition?</span></h2>
+          <p className="text-white/80 mb-7 max-w-xl mx-auto">Order in seconds — chat with us on WhatsApp and we'll handle the rest.</p>
+          <Button size="lg" className="wa-gradient text-white border-0 h-12 px-8 text-base shadow-2xl rounded-full" onClick={() => window.open(`https://wa.me/${whatsapp}`, '_blank')}>
+            <MessageCircle className="w-5 h-5 mr-2" /> Order on WhatsApp
+          </Button>
+        </div>
+      </section>
+
+      {/* Gold strip */}
+      <div className="gold-strip"></div>
+
       {/* FOOTER */}
-      <footer className="border-t border-border/60 py-10">
+      <footer className="cream-bg border-t border-border/60 py-10">
         <div className="container flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <div>© {new Date().getFullYear()} {brand}. Crafted with love.</div>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-accent/30"><img src={BRAND_LOGO} alt="" className="w-full h-full object-cover" /></div>
+            <div>© {new Date().getFullYear()} <span className="font-semibold" style={{ color: '#1c3380' }}>{brand}</span>. Crafted with love.</div>
+          </div>
           <div className="flex gap-5">
             <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="hover:text-primary">WhatsApp</a>
             <Link href="/about" className="hover:text-primary">About</Link>
@@ -427,26 +483,20 @@ export default function App() {
 
       {/* STICKY MOBILE CART BAR */}
       {cartCount > 0 && !cartOpen && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur-md border-t shadow-2xl p-3">
-          <Button onClick={() => setCartOpen(true)} className="w-full h-12 spice-gradient text-white border-0 flex items-center justify-between px-5">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5" />
-              <span>{cartCount} item{cartCount > 1 ? 's' : ''}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold">₹{cartTotal}</span>
-              <span className="text-sm opacity-90">View cart →</span>
-            </div>
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#FFF8EE]/95 backdrop-blur-md border-t shadow-2xl p-3">
+          <Button onClick={() => setCartOpen(true)} className="w-full h-12 orange-gradient text-white border-0 flex items-center justify-between px-5 rounded-full">
+            <div className="flex items-center gap-2"><ShoppingCart className="w-5 h-5" /><span>{cartCount} item{cartCount > 1 ? 's' : ''}</span></div>
+            <div className="flex items-center gap-2"><span className="font-bold">₹{cartTotal}</span><span className="text-sm opacity-90">View cart →</span></div>
           </Button>
         </div>
       )}
 
-      {/* PRODUCT DETAIL DIALOG with GALLERY */}
+      {/* PRODUCT DETAIL */}
       <Dialog open={!!selectedProduct} onOpenChange={(o) => !o && setSelectedProduct(null)}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden max-h-[92vh] overflow-y-auto">
           {selectedProduct && (
             <div className="grid sm:grid-cols-2">
-              <div className="bg-secondary">
+              <div className="bg-secondary/5">
                 <div className="relative aspect-square">
                   {(selectedProduct.images || []).map((src, i) => (
                     <img key={i} src={cldUrl(src, 1200)} alt={selectedProduct.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" style={{ opacity: i === galleryIdx ? 1 : 0 }} />
@@ -469,13 +519,13 @@ export default function App() {
                 )}
               </div>
               <div className="p-6 flex flex-col">
-                {selectedProduct.badge && <Badge className="w-fit spice-gradient text-white border-0 mb-2">{selectedProduct.badge}</Badge>}
-                <h3 className="font-display text-2xl md:text-3xl font-bold">{selectedProduct.name}</h3>
+                {selectedProduct.badge && <Badge className="w-fit orange-gradient text-white border-0 mb-2">{selectedProduct.badge}</Badge>}
+                <h3 className="font-display text-2xl md:text-3xl font-bold" style={{ color: '#1c3380' }}>{selectedProduct.name}</h3>
                 <p className="text-sm text-muted-foreground italic mb-3">{selectedProduct.title}</p>
                 <p className="text-sm leading-relaxed mb-4">{selectedProduct.description}</p>
-                <div className="text-3xl font-bold mb-1">₹{selectedProduct.price}</div>
+                <div className="text-3xl font-bold mb-1" style={{ color: '#1c3380' }}>₹{selectedProduct.price}</div>
                 <div className="text-xs text-muted-foreground mb-6">{selectedProduct.weight}</div>
-                <Button onClick={() => { addToCart(selectedProduct); setSelectedProduct(null) }} className="spice-gradient text-white border-0 mt-auto h-11">
+                <Button onClick={() => { addToCart(selectedProduct); setSelectedProduct(null) }} className="orange-gradient text-white border-0 mt-auto h-11 rounded-full">
                   <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
                 </Button>
               </div>
@@ -484,10 +534,10 @@ export default function App() {
         </DialogContent>
       </Dialog>
 
-      {/* CHECKOUT DIALOG */}
+      {/* CHECKOUT */}
       <Dialog open={checkoutOpen} onOpenChange={setCheckoutOpen}>
         <DialogContent className="max-w-md max-h-[92vh] overflow-y-auto">
-          <DialogHeader><DialogTitle className="font-display text-2xl">Place Your Order</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="font-display text-2xl" style={{ color: '#1c3380' }}>Place Your Order</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div><Label htmlFor="n">Full Name *</Label><Input id="n" value={name} onChange={e => setName(e.target.value)} placeholder="John Doe" /></div>
             <div><Label htmlFor="p">Phone *</Label><Input id="p" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 9876543210" /></div>
@@ -499,7 +549,7 @@ export default function App() {
               {discount > 0 && <div className="flex justify-between text-green-700"><span>Coupon ({appliedCoupon.code})</span><span>−₹{discount}</span></div>}
               <div className="flex justify-between font-bold text-base pt-1 border-t"><span>Total</span><span>₹{cartTotal}</span></div>
             </div>
-            <Button onClick={placeOrder} className="w-full bg-green-600 hover:bg-green-700 text-white h-12">
+            <Button onClick={placeOrder} className="w-full wa-gradient text-white border-0 h-12 rounded-full">
               <MessageCircle className="w-5 h-5 mr-2" /> Send Order on WhatsApp
             </Button>
             <p className="text-xs text-muted-foreground text-center">You'll be redirected to WhatsApp to confirm.</p>
