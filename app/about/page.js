@@ -7,7 +7,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Sparkles, MessageCircle, Mail, MapPin, ArrowLeft, Leaf, Award, Truck, Heart } from 'lucide-react'
 import Link from 'next/link'
 
-const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,g_north,w_220,h_220,y_30/c_fill,w_200,h_200,f_auto,q_auto/v1778306538/sevmunchies/file_in5vdw.png'
+const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,w_520,h_420,x_508,y_94/c_fill,w_240,h_240,f_auto,q_auto/v1778307396/sevmunchies/file_mwxxik.png'
+const WA_DEFAULT_MSG = encodeURIComponent("Hi! I would like to know more about your products.")
 
 export default function AboutPage() {
   const [s, setS] = useState({ brand: 'Famous Namkeen', whatsapp: '916303520089', email: '', address: '' })
@@ -23,14 +24,18 @@ export default function AboutPage() {
       <nav className="sticky top-0 z-40 backdrop-blur-md bg-[#FFF8EE]/95 border-b border-border/60">
         <div className="container flex items-center justify-between h-16 sm:h-20">
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-accent/30 shadow-md">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shadow-md ring-2 ring-accent/40 bg-black flex-shrink-0">
               <img src={BRAND_LOGO} alt={s.brand} className="w-full h-full object-cover" />
             </div>
             <div>
-              <div className="font-display font-bold text-lg sm:text-xl leading-tight" style={{ color: '#1c3380' }}>
-                <span className="orange-text">{s.brand.split(' ')[0]}</span>{s.brand.split(' ').slice(1).join(' ') ? ' ' + s.brand.split(' ').slice(1).join(' ') : ''}
+              <div className="font-display font-bold text-xl sm:text-2xl leading-none tracking-wide gold-text uppercase">
+                {s.brand.split(' ')[0] || s.brand}
               </div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase">Premium Indian Snacks</div>
+              {s.brand.split(' ').slice(1).join(' ') && (
+                <div className="font-display font-semibold text-[11px] sm:text-xs leading-tight tracking-[0.25em] uppercase mt-0.5 gold-text">
+                  {s.brand.split(' ').slice(1).join(' ')}
+                </div>
+              )}
             </div>
           </Link>
           <Link href="/" className="text-sm font-medium hover:text-primary flex items-center gap-1" style={{ color: '#1c3380' }}>
@@ -97,7 +102,7 @@ export default function AboutPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            <a href={`https://wa.me/${s.whatsapp}`} target="_blank" rel="noreferrer">
+            <a href={`https://wa.me/${s.whatsapp}?text=${WA_DEFAULT_MSG}`} target="_blank" rel="noreferrer">
               <Card className="snack-card cursor-pointer bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition">
                 <CardContent className="p-6 text-center">
                   <div className="w-14 h-14 rounded-full wa-gradient mx-auto flex items-center justify-center mb-3"><MessageCircle className="w-7 h-7 text-white" /></div>
@@ -131,7 +136,7 @@ export default function AboutPage() {
           </div>
 
           <div className="text-center mt-10">
-            <Button size="lg" className="wa-gradient text-white border-0 h-12 px-8 rounded-full shadow-2xl" onClick={() => window.open(`https://wa.me/${s.whatsapp}`, '_blank')}>
+            <Button size="lg" className="wa-gradient text-white border-0 h-12 px-8 rounded-full shadow-2xl" onClick={() => window.open(`https://wa.me/${s.whatsapp}?text=${WA_DEFAULT_MSG}`, '_blank')}>
               <MessageCircle className="w-5 h-5 mr-2" /> Chat with us on WhatsApp
             </Button>
           </div>

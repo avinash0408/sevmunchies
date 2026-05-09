@@ -14,7 +14,8 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 
 const CART_KEY = 'sev_cart_v1'
-const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,g_north,w_220,h_220,y_30/c_fill,w_200,h_200,f_auto,q_auto/v1778306538/sevmunchies/file_in5vdw.png'
+const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,w_520,h_420,x_508,y_94/c_fill,w_240,h_240,f_auto,q_auto/v1778307396/sevmunchies/file_mwxxik.png'
+const WA_DEFAULT_MSG = encodeURIComponent("Hi! I would like to know more about your products.")
 
 // Cloudinary on-the-fly transform
 const cldUrl = (url, w = 600) => {
@@ -156,14 +157,18 @@ export default function App() {
       <nav className="sticky top-0 z-40 backdrop-blur-md bg-[#FFF8EE]/95 border-b border-border/60">
         <div className="container flex items-center justify-between h-16 sm:h-20">
           <a href="#" className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-accent/30 shadow-md flex-shrink-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shadow-md ring-2 ring-accent/40 bg-black flex-shrink-0">
               <img src={BRAND_LOGO} alt={brand} className="w-full h-full object-cover" />
             </div>
             <div>
-              <div className="font-display font-bold text-lg sm:text-xl leading-tight" style={{ color: '#1c3380' }}>
-                <span className="orange-text">{brand.split(' ')[0] || brand}</span>{brand.split(' ').slice(1).join(' ') ? ' ' + brand.split(' ').slice(1).join(' ') : ''}
+              <div className="font-display font-bold text-xl sm:text-2xl leading-none tracking-wide gold-text uppercase">
+                {brand.split(' ')[0] || brand}
               </div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground tracking-widest uppercase">Premium Indian Snacks</div>
+              {brand.split(' ').slice(1).join(' ') && (
+                <div className="font-display font-semibold text-[11px] sm:text-xs leading-tight tracking-[0.25em] uppercase mt-0.5 gold-text">
+                  {brand.split(' ').slice(1).join(' ')}
+                </div>
+              )}
             </div>
           </a>
           <div className="flex items-center gap-3 sm:gap-5">
@@ -263,7 +268,7 @@ export default function App() {
               <Button size="lg" className="orange-gradient text-white border-0 h-12 px-7 text-base shadow-xl hover:opacity-90 rounded-full" onClick={() => document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' })}>
                 Explore Products →
               </Button>
-              <Button size="lg" className="wa-gradient text-white border-0 h-12 px-7 text-base shadow-xl hover:opacity-90 rounded-full" onClick={() => window.open(`https://wa.me/${whatsapp}`, '_blank')}>
+              <Button size="lg" className="wa-gradient text-white border-0 h-12 px-7 text-base shadow-xl hover:opacity-90 rounded-full" onClick={() => window.open(`https://wa.me/${whatsapp}?text=${WA_DEFAULT_MSG}`, '_blank')}>
                 <MessageCircle className="w-4 h-4 mr-2" /> Order on WhatsApp
               </Button>
             </div>
@@ -457,7 +462,7 @@ export default function App() {
         <div className="container py-14 md:py-20 text-center relative">
           <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">Ready to taste <span className="gold-text">tradition?</span></h2>
           <p className="text-white/80 mb-7 max-w-xl mx-auto">Order in seconds — chat with us on WhatsApp and we'll handle the rest.</p>
-          <Button size="lg" className="wa-gradient text-white border-0 h-12 px-8 text-base shadow-2xl rounded-full" onClick={() => window.open(`https://wa.me/${whatsapp}`, '_blank')}>
+          <Button size="lg" className="wa-gradient text-white border-0 h-12 px-8 text-base shadow-2xl rounded-full" onClick={() => window.open(`https://wa.me/${whatsapp}?text=${WA_DEFAULT_MSG}`, '_blank')}>
             <MessageCircle className="w-5 h-5 mr-2" /> Order on WhatsApp
           </Button>
         </div>
@@ -474,7 +479,7 @@ export default function App() {
             <div>© {new Date().getFullYear()} <span className="font-semibold" style={{ color: '#1c3380' }}>{brand}</span>. Crafted with love.</div>
           </div>
           <div className="flex gap-5">
-            <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="hover:text-primary">WhatsApp</a>
+            <a href={`https://wa.me/${whatsapp}?text=${WA_DEFAULT_MSG}`} target="_blank" rel="noreferrer" className="hover:text-primary">WhatsApp</a>
             <Link href="/about" className="hover:text-primary">About</Link>
             <a href="#shop" className="hover:text-primary">Shop</a>
           </div>
