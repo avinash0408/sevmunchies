@@ -12,9 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ShoppingCart, Plus, Minus, Trash2, MessageCircle, Sparkles, Leaf, Award, Truck, Search, ChevronLeft, ChevronRight, Tag, X, Star } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import Image from "next/image"
 
 const CART_KEY = 'sev_cart_v1'
-const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,w_520,h_420,x_508,y_94/c_fill,w_240,h_240,f_auto,q_auto/v1778307396/sevmunchies/file_mwxxik.png'
 const WA_DEFAULT_MSG = encodeURIComponent("Hi! I would like to know more about your products.")
 
 // Cloudinary on-the-fly transform
@@ -153,39 +153,43 @@ export default function App() {
       {/* Gold strip top */}
       <div className="gold-strip"></div>
 
-      {/* NAV - cream like reference */}
-      <nav className="sticky top-0 z-40 backdrop-blur-md bg-[#FFF8EE]/95 border-b border-border/60">
+      {/* ── UPDATED NAV ── */}
+      <nav className="sticky top-0 z-50 navy-gradient navy-pattern">
         <div className="container flex items-center justify-between h-16 sm:h-20">
-          <a href="#" className="flex items-center gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shadow-md ring-2 ring-accent/40 bg-black flex-shrink-0">
-              <img src={BRAND_LOGO} alt={brand} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <div className="font-display font-bold text-xl sm:text-2xl leading-none tracking-wide gold-text uppercase">
-                {brand.split(' ')[0] || brand}
-              </div>
-              {brand.split(' ').slice(1).join(' ') && (
-                <div className="font-display font-semibold text-[11px] sm:text-xs leading-tight tracking-[0.25em] uppercase mt-0.5 gold-text">
-                  {brand.split(' ').slice(1).join(' ')}
-                </div>
-              )}
+        
+          {/* Logo */}
+          <a href="#" className="flex items-center gap-2 sm:gap-3">
+            <Image
+              src="/logo.png"
+              alt={brand}
+              width={180}
+              height={80}
+              priority
+              className="h-12 sm:h-14 md:h-16 w-auto object-contain"
+            />
+
+            <div className="font-display font-bold text-lg sm:text-xl md:text-2xl leading-none tracking-wide gold-text uppercase whitespace-nowrap">
+              {brand}
             </div>
           </a>
+
           <div className="flex items-center gap-3 sm:gap-5">
-            <a href="#shop" className="hidden md:inline text-sm font-medium hover:text-primary transition" style={{ color: '#1c3380' }}>Shop</a>
-            <Link href="/about" className="hidden md:inline text-sm font-medium hover:text-primary transition" style={{ color: '#1c3380' }}>About</Link>
+            <a href="#shop" className="hidden md:inline text-sm font-medium text-[#E8C97A]/80 hover:text-white transition">Shop</a>
+            <Link href="/about" className="hidden md:inline text-sm font-medium text-[#E8C97A]/80 hover:text-white transition">About</Link>
+
+            {/* Golden Cart Button */}
             <Sheet open={cartOpen} onOpenChange={setCartOpen}>
               <SheetTrigger asChild>
-                <Button className="relative wa-gradient text-white border-0 shadow-md hover:opacity-90 rounded-full">
-                  <ShoppingCart className="w-4 h-4 sm:mr-2" />
+                <Button className="relative bg-[#C9A84C] hover:bg-[#E8C97A] text-[#0F172A] font-semibold border-0 shadow-md flex items-center gap-2 px-5 h-10 rounded-full transition-all">
+                  <ShoppingCart className="w-4 h-4" />
                   <span className="hidden sm:inline">Cart</span>
                   {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow">{cartCount}</span>
+                    <span className="absolute -top-2 -right-2 bg-white text-[#C9A84C] text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow">{cartCount}</span>
                   )}
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-full sm:max-w-md flex flex-col">
-                <SheetHeader><SheetTitle className="font-display text-2xl" style={{ color: '#1c3380' }}>Your Cart</SheetTitle></SheetHeader>
+                <SheetHeader><SheetTitle className="font-display text-2xl" style={{ color: '#1E2D5A' }}>Your Cart</SheetTitle></SheetHeader>
                 <div className="flex-1 overflow-y-auto scrollbar-thin py-4 space-y-3">
                   {cartItems.length === 0 ? (
                     <div className="text-center py-16 text-muted-foreground">
@@ -235,7 +239,7 @@ export default function App() {
                       {discount > 0 && <div className="flex justify-between text-green-700"><span>Discount</span><span>−₹{discount}</span></div>}
                       <div className="flex justify-between items-center pt-1">
                         <span className="font-semibold">Total</span>
-                        <span className="font-display text-2xl font-bold" style={{ color: '#1c3380' }}>₹{cartTotal}</span>
+                        <span className="font-display text-2xl font-bold" style={{ color: '#1E2D5A' }}>₹{cartTotal}</span>
                       </div>
                     </div>
                     <Button onClick={() => setCheckoutOpen(true)} className="w-full wa-gradient text-white border-0 h-12 text-base rounded-full">
@@ -249,7 +253,7 @@ export default function App() {
         </div>
       </nav>
 
-      {/* HERO — NAVY background like reference */}
+      {/* HERO — NAVY background */}
       <section className="relative navy-gradient navy-pattern overflow-hidden">
         <div className="container py-12 md:py-20 lg:py-24 grid md:grid-cols-2 gap-8 md:gap-12 items-center relative">
           <div className="text-white">
@@ -328,12 +332,12 @@ export default function App() {
                 </>
               )}
               {/* Reviews badge floating */}
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-3 flex items-center gap-3 border-2 border-accent/30 hidden sm:flex">
+              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-3 items-center gap-3 border-2 border-accent/30 hidden sm:flex">
                 <div className="w-10 h-10 rounded-full orange-gradient flex items-center justify-center">
                   <Star className="w-5 h-5 text-white fill-white" />
                 </div>
                 <div>
-                  <div className="font-display text-lg font-bold" style={{ color: '#1c3380' }}>4.9 / 5</div>
+                  <div className="font-display text-lg font-bold" style={{ color: '#1E2D5A' }}>4.9 / 5</div>
                   <div className="text-[11px] text-muted-foreground">From 2,400+ reviews</div>
                 </div>
               </div>
@@ -350,7 +354,7 @@ export default function App() {
         <div className="container py-14 md:py-20">
           <div className="text-center mb-10">
             <Badge className="mb-3 bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/10">Bestsellers</Badge>
-            <h2 className="font-display text-3xl md:text-5xl font-bold" style={{ color: '#1c3380' }}>Our Signature <span className="orange-text">Snacks</span></h2>
+            <h2 className="font-display text-3xl md:text-5xl font-bold" style={{ color: '#1E2D5A' }}>Our Signature <span className="orange-text">Snacks</span></h2>
             <p className="text-muted-foreground mt-3 max-w-xl mx-auto">Hand-crafted in small batches for unmatched freshness and crunch.</p>
             <div className="relative max-w-sm mx-auto mt-6">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -384,11 +388,11 @@ export default function App() {
                       </Button>
                     </div>
                     <CardContent className="p-4">
-                      <div className="font-display font-bold text-lg leading-tight" style={{ color: '#1c3380' }}>{p.name}</div>
+                      <div className="font-display font-bold text-lg leading-tight" style={{ color: '#1E2D5A' }}>{p.name}</div>
                       <div className="text-xs text-muted-foreground mb-2">{p.title}</div>
                       <div className="flex items-center justify-between mt-3">
                         <div>
-                          <span className="font-bold text-xl" style={{ color: '#1c3380' }}>₹{p.price}</span>
+                          <span className="font-bold text-xl" style={{ color: '#1E2D5A' }}>₹{p.price}</span>
                           {p.weight && <span className="text-xs text-muted-foreground ml-2">{p.weight}</span>}
                         </div>
                         <Button size="sm" className="orange-gradient text-white border-0 rounded-full" onClick={(e) => { e.stopPropagation(); addToCart(p) }}>
@@ -420,7 +424,7 @@ export default function App() {
             ].map(({ icon: I, title, text }, i) => (
               <div key={i} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
                 <div className="w-12 h-12 rounded-full gold-gradient flex items-center justify-center mb-4">
-                  <I className="w-6 h-6" style={{ color: '#1c3380' }} />
+                  <I className="w-6 h-6" style={{ color: '#1E2D5A' }} />
                 </div>
                 <h3 className="font-display text-lg font-bold text-white mb-1">{title}</h3>
                 <p className="text-sm text-white/70">{text}</p>
@@ -438,20 +442,29 @@ export default function App() {
         <div className="container grid md:grid-cols-2 gap-10 items-center">
           <div>
             <Badge className="mb-3 bg-secondary/10 text-secondary border-secondary/20 hover:bg-secondary/10">Our Story</Badge>
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4" style={{ color: '#1c3380' }}>From the heart of <span className="orange-text">Ratlam</span></h2>
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4" style={{ color: '#1E2D5A' }}>From the heart of <span className="orange-text">Ratlam</span></h2>
             <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
               What began as a small family kitchen in the spice-laden lanes of Ratlam is now a beloved name in households across India. Every packet of {brand} carries the warmth of a tradition kept alive — one crunchy bite at a time.
             </p>
             <div className="grid grid-cols-3 gap-4 mt-8">
-              <div><div className="font-display text-3xl font-bold" style={{ color: '#1c3380' }}>15+</div><div className="text-xs text-muted-foreground">Heritage recipes</div></div>
-              <div><div className="font-display text-3xl font-bold" style={{ color: '#1c3380' }}>100%</div><div className="text-xs text-muted-foreground">Natural</div></div>
-              <div><div className="font-display text-3xl font-bold" style={{ color: '#1c3380' }}>10k+</div><div className="text-xs text-muted-foreground">Customers</div></div>
+              <div><div className="font-display text-3xl font-bold" style={{ color: '#1E2D5A' }}>15+</div><div className="text-xs text-muted-foreground">Heritage recipes</div></div>
+              <div><div className="font-display text-3xl font-bold" style={{ color: '#1E2D5A' }}>100%</div><div className="text-xs text-muted-foreground">Natural</div></div>
+              <div><div className="font-display text-3xl font-bold" style={{ color: '#1E2D5A' }}>10k+</div><div className="text-xs text-muted-foreground">Customers</div></div>
             </div>
             <Link href="/about"><Button className="mt-6 orange-gradient text-white border-0 rounded-full px-6">Read our story →</Button></Link>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {products.slice(0, 4).map(p => (
-              <img key={p.id} src={cldUrl((p.images && p.images[0]) || p.image, 400)} alt={p.name} className="w-full aspect-square object-cover rounded-2xl shadow-md" />
+                <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-md">
+                  <Image
+                    key={p.id}
+                    src={cldUrl((p.images && p.images[0]) || p.image, 400)}
+                    alt={p.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                </div>
             ))}
           </div>
         </div>
@@ -472,23 +485,33 @@ export default function App() {
       <div className="gold-strip"></div>
 
       {/* FOOTER */}
-      <footer className="cream-bg border-t border-border/60 py-10">
+      <footer className="cream-bg border-t border-border/60 py-6 md:py-8">
         <div className="container flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-accent/30"><img src={BRAND_LOGO} alt="" className="w-full h-full object-cover" /></div>
-            <div>© {new Date().getFullYear()} <span className="font-semibold" style={{ color: '#1c3380' }}>{brand}</span>. Crafted with love.</div>
+            <Image
+              src="/logo.png"
+              alt={brand}
+              width={120}
+              height={40}
+              className="h-9 sm:h-10 w-auto object-contain opacity-90"
+            />
+            <div className="text-xs sm:text-sm">
+              © {new Date().getFullYear()} <span className="font-semibold" style={{ color: '#1E2D5A' }}>{brand}</span>. 
+              Crafted with love.
+            </div>
           </div>
-          <div className="flex gap-5">
-            <a href={`https://wa.me/${whatsapp}?text=${WA_DEFAULT_MSG}`} target="_blank" rel="noreferrer" className="hover:text-primary">WhatsApp</a>
-            <Link href="/about" className="hover:text-primary">About</Link>
-            <a href="#shop" className="hover:text-primary">Shop</a>
+          
+          <div className="flex gap-5 text-xs sm:text-sm">
+            <a href={`https://wa.me/${whatsapp}?text=${WA_DEFAULT_MSG}`} target="_blank" rel="noreferrer" className="hover:text-primary transition">WhatsApp</a>
+            <Link href="/about" className="hover:text-primary transition">About</Link>
+            <a href="#shop" className="hover:text-primary transition">Shop</a>
           </div>
         </div>
       </footer>
 
-      {/* STICKY MOBILE CART BAR */}
+      {/* STICKY MOBILE CART BAR — navy to match navbar */}
       {cartCount > 0 && !cartOpen && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#FFF8EE]/95 backdrop-blur-md border-t shadow-2xl p-3">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#1E2D5A]/97 backdrop-blur-md border-t border-[#C9A84C]/30 shadow-2xl p-3">
           <Button onClick={() => setCartOpen(true)} className="w-full h-12 orange-gradient text-white border-0 flex items-center justify-between px-5 rounded-full">
             <div className="flex items-center gap-2"><ShoppingCart className="w-5 h-5" /><span>{cartCount} item{cartCount > 1 ? 's' : ''}</span></div>
             <div className="flex items-center gap-2"><span className="font-bold">₹{cartTotal}</span><span className="text-sm opacity-90">View cart →</span></div>
@@ -525,10 +548,10 @@ export default function App() {
               </div>
               <div className="p-6 flex flex-col">
                 {selectedProduct.badge && <Badge className="w-fit orange-gradient text-white border-0 mb-2">{selectedProduct.badge}</Badge>}
-                <h3 className="font-display text-2xl md:text-3xl font-bold" style={{ color: '#1c3380' }}>{selectedProduct.name}</h3>
+                <h3 className="font-display text-2xl md:text-3xl font-bold" style={{ color: '#1E2D5A' }}>{selectedProduct.name}</h3>
                 <p className="text-sm text-muted-foreground italic mb-3">{selectedProduct.title}</p>
                 <p className="text-sm leading-relaxed mb-4">{selectedProduct.description}</p>
-                <div className="text-3xl font-bold mb-1" style={{ color: '#1c3380' }}>₹{selectedProduct.price}</div>
+                <div className="text-3xl font-bold mb-1" style={{ color: '#1E2D5A' }}>₹{selectedProduct.price}</div>
                 <div className="text-xs text-muted-foreground mb-6">{selectedProduct.weight}</div>
                 <Button onClick={() => { addToCart(selectedProduct); setSelectedProduct(null) }} className="orange-gradient text-white border-0 mt-auto h-11 rounded-full">
                   <ShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
@@ -542,7 +565,7 @@ export default function App() {
       {/* CHECKOUT */}
       <Dialog open={checkoutOpen} onOpenChange={setCheckoutOpen}>
         <DialogContent className="max-w-md max-h-[92vh] overflow-y-auto">
-          <DialogHeader><DialogTitle className="font-display text-2xl" style={{ color: '#1c3380' }}>Place Your Order</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="font-display text-2xl" style={{ color: '#1E2D5A' }}>Place Your Order</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div><Label htmlFor="n">Full Name *</Label><Input id="n" value={name} onChange={e => setName(e.target.value)} placeholder="John Doe" /></div>
             <div><Label htmlFor="p">Phone *</Label><Input id="p" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 9876543210" /></div>

@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { Sparkles, MessageCircle, Mail, MapPin, ArrowLeft, Leaf, Award, Truck, Heart } from 'lucide-react'
+import { MessageCircle, Mail, MapPin, ArrowLeft, Leaf, Award, Truck, Heart } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,w_520,h_420,x_508,y_94/c_fill,w_240,h_240,f_auto,q_auto/v1778307396/sevmunchies/file_mwxxik.png'
 const WA_DEFAULT_MSG = encodeURIComponent("Hi! I would like to know more about your products.")
@@ -21,29 +22,37 @@ export default function AboutPage() {
     <div className="min-h-screen cream-bg">
       <div className="gold-strip"></div>
 
-      <nav className="sticky top-0 z-40 backdrop-blur-md bg-[#FFF8EE]/95 border-b border-border/60">
-        <div className="container flex items-center justify-between h-16 sm:h-20">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shadow-md ring-2 ring-accent/40 bg-black flex-shrink-0">
-              <img src={BRAND_LOGO} alt={s.brand} className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <div className="font-display font-bold text-xl sm:text-2xl leading-none tracking-wide gold-text uppercase">
-                {s.brand.split(' ')[0] || s.brand}
-              </div>
-              {s.brand.split(' ').slice(1).join(' ') && (
-                <div className="font-display font-semibold text-[11px] sm:text-xs leading-tight tracking-[0.25em] uppercase mt-0.5 gold-text">
-                  {s.brand.split(' ').slice(1).join(' ')}
-                </div>
-              )}
-            </div>
-          </Link>
-          <Link href="/" className="text-sm font-medium hover:text-primary flex items-center gap-1" style={{ color: '#1c3380' }}>
-            <ArrowLeft className="w-4 h-4" /> Back to shop
-          </Link>
+      <nav className="sticky top-0 z-50 navy-gradient navy-pattern border-b border-[#C9A84C]/30 backdrop-blur-md">
+  <div className="container flex items-center justify-between h-16 sm:h-20 px-6">
+    
+    {/* Logo - Use Link */}
+    <Link href="/" className="flex items-center gap-2 sm:gap-3">
+      <Image
+        src="/logo.png"
+        alt={s.brand}
+        width={180}
+        height={80}
+        priority
+        className="h-12 sm:h-14 w-auto object-contain"
+      />
+      <div className="font-display font-bold text-lg sm:text-xl md:text-2xl leading-none tracking-wide gold-text uppercase whitespace-nowrap">
+        {s.brand}
+      </div>
+    </Link>
+
+    {/* Right Side */}
+    <div className="flex items-center gap-4 sm:gap-6">
+      {/* Back to Shop - Use Link */}
+      <Link 
+        href="/" 
+        className="hidden md:flex items-center gap-1.5 text-sm font-medium text-[#E8C97A]/80 hover:text-white transition"
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to Shop
+      </Link>
+          </div>
         </div>
       </nav>
-
+      
       {/* HERO — navy */}
       <section className="navy-gradient navy-pattern relative">
         <div className="container py-14 md:py-24 text-center relative">
@@ -145,8 +154,23 @@ export default function AboutPage() {
 
       <div className="gold-strip"></div>
 
+      {/* FOOTER - Centered & Compact */}
       <footer className="cream-bg border-t border-border/60 py-8">
-        <div className="container text-center text-sm text-muted-foreground">© {new Date().getFullYear()} <span className="font-semibold" style={{ color: '#1c3380' }}>{s.brand}</span>. Crafted with love.</div>
+        <div className="container flex flex-col items-center gap-4 text-center">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt={s.brand}
+              width={120}
+              height={40}
+              className="h-9 sm:h-10 w-auto object-contain opacity-90"
+            />
+            <div className="text-xs sm:text-sm">
+              © {new Date().getFullYear()} <span className="font-semibold" style={{ color: '#1E2D5A' }}>{s.brand}</span>. 
+              Crafted with love.
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   )
