@@ -1,22 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { MessageCircle, Mail, MapPin, ArrowLeft, Leaf, Award, Truck, Heart } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSettings } from '@/hooks/use-settings'
 
-const BRAND_LOGO = 'https://res.cloudinary.com/dprlv7yng/image/upload/c_crop,w_520,h_420,x_508,y_94/c_fill,w_240,h_240,f_auto,q_auto/v1778307396/sevmunchies/file_mwxxik.png'
 const WA_DEFAULT_MSG = encodeURIComponent("Hi! I would like to know more about your products.")
 
 export default function AboutPage() {
-  const [s, setS] = useState({ brand: 'Famous Namkeen', whatsapp: '916303520089', email: '', address: '' })
-
-  useEffect(() => {
-    fetch('/api/settings').then(r => r.json()).then(d => setS(prev => ({ ...prev, ...d })))
-  }, [])
+  const { settings: s } = useSettings()
 
   return (
     <div className="min-h-screen cream-bg">

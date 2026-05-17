@@ -63,6 +63,22 @@ const SEED = {
     { id: uuidv4(), code: 'WELCOME10', type: 'percent', value: 10, minOrder: 300, active: true, createdAt: new Date().toISOString() },
     { id: uuidv4(), code: 'FLAT50', type: 'flat', value: 50, minOrder: 500, active: true, createdAt: new Date().toISOString() },
   ],
+  reviews: [
+    {
+      id: uuidv4(),
+      name: 'Ritika Sharma',
+      rating: 5,
+      message: 'Fresh, crispy and perfectly spiced. The Masala Papdi is now our evening must-have!',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: uuidv4(),
+      name: 'Kunal Mehta',
+      rating: 4,
+      message: 'Great taste and fast delivery. Garlic Sev pairs amazingly with chai.',
+      createdAt: new Date().toISOString(),
+    },
+  ],
   settings: {
     password: 'admin123', whatsapp: '916303520089', brand: 'SevMunchies',
     address: 'Hyderabad, India', email: 'orders@sevmunchies.in',
@@ -81,6 +97,7 @@ async function loadDb() {
     cache = JSON.parse(raw)
     cache.products ??= []
     cache.coupons ??= []
+    cache.reviews ??= []
     cache.settings ??= { ...SEED.settings }
   } catch {
     cache = JSON.parse(JSON.stringify(SEED))
@@ -141,6 +158,10 @@ async function handler(request, { params }) {
 
     // === Public reads ===
     if (method === 'GET' && reqPath === 'products') return NextResponse.json(db.products)
+    if (method === 'GET' && reqPath === 'reviews') {
+      const sorted = [...(db.reviews || [])].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
+      return NextResponse.json(sorted)
+    }
     if (method === 'GET' && reqPath === 'settings') {
       const s = db.settings
       return NextResponse.json({ whatsapp: s.whatsapp || '', brand: s.brand || 'SevMunchies', address: s.address || '', email: s.email || '' })
@@ -163,6 +184,30 @@ async function handler(request, { params }) {
       return NextResponse.json({ valid: true, code: c.code, type: c.type, value: c.value, discount, message: `Coupon applied — saved ₹${discount}!` })
     }
 
+    if (method === 'POST' && reqPath === 'reviews') {
+      const name = String(body.name || '').trim()
+      const message = String(body.message || '').trim()
+      const rating = Number(body.rating)
+
+      if (!name || !message) {
+        return NextResponse.json({ error: 'Name and feedback are required' }, { status: 400 })
+      }
+      if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+        return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 })
+      }
+
+      const doc = {
+        id: uuidv4(),
+        name: name.slice(0, 60),
+        rating: Math.round(rating),
+        message: message.slice(0, 500),
+        createdAt: new Date().toISOString(),
+      }
+      db.reviews = [doc, ...(db.reviews || [])]
+      await saveDb()
+      return NextResponse.json(doc)
+    }
+
     // === Admin auth ===
     const adminPwd = request.headers.get('x-admin-password')
     const isAdmin = adminPwd && adminPwd === db.settings.password
@@ -170,6 +215,11 @@ async function handler(request, { params }) {
     if (method === 'GET' && reqPath === 'coupons') {
       if (!isAdmin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       return NextResponse.json(db.coupons)
+    }
+    if (method === 'GET' && reqPath === 'admin/reviews') {
+      if (!isAdmin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      const sorted = [...(db.reviews || [])].sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
+      return NextResponse.json(sorted)
     }
 
     if (method !== 'GET' && !isAdmin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -181,6 +231,7 @@ async function handler(request, { params }) {
         name: body.name || 'Untitled',
         title: body.title || '',
         description: body.description || '',
+        ingredients: Array.isArray(body.ingredients) ? body.ingredients.filter(Boolean) : [],
         price: Number(body.price) || 0,
         weight: body.weight || '',
         images: Array.isArray(body.images) ? body.images.filter(Boolean) : [],
@@ -203,6 +254,9 @@ async function handler(request, { params }) {
         name: body.name ?? cur.name,
         title: body.title ?? cur.title,
         description: body.description ?? cur.description,
+        ingredients: body.ingredients !== undefined
+          ? (Array.isArray(body.ingredients) ? body.ingredients.filter(Boolean) : cur.ingredients || [])
+          : (cur.ingredients || []),
         price: body.price !== undefined ? Number(body.price) || 0 : cur.price,
         weight: body.weight ?? cur.weight,
         badge: body.badge ?? cur.badge,
@@ -258,6 +312,19 @@ async function handler(request, { params }) {
     if (method === 'DELETE' && reqPath.startsWith('coupons/')) {
       const id = reqPath.split('/')[1]
       db.coupons = db.coupons.filter(c => c.id !== id)
+      await saveDb()
+      return NextResponse.json({ ok: true })
+    }
+
+    // === Reviews admin actions ===
+    if (method === 'DELETE' && reqPath === 'reviews') {
+      db.reviews = []
+      await saveDb()
+      return NextResponse.json({ ok: true })
+    }
+    if (method === 'DELETE' && reqPath.startsWith('reviews/')) {
+      const id = reqPath.split('/')[1]
+      db.reviews = (db.reviews || []).filter(r => r.id !== id)
       await saveDb()
       return NextResponse.json({ ok: true })
     }

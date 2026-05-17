@@ -38,8 +38,12 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: hsl(var(--background));
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.65), transparent 35%),
+    radial-gradient(circle at 90% 20%, rgba(232, 201, 122, 0.12), transparent 40%),
+    linear-gradient(180deg, #fffaf2 0%, #fff7ea 55%, #fef2df 100%);
   color: hsl(var(--foreground));
+  min-height: 100vh;
 }
 
 .font-display {
@@ -52,11 +56,15 @@ body {
 }
 
 .navy-gradient {
-  background: linear-gradient(135deg, #1E2D5A 0%, #162348 60%, #0E1830 100%);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 38%),
+    radial-gradient(circle at 80% 75%, rgba(232, 201, 122, 0.16), transparent 45%),
+    linear-gradient(140deg, #132457 0%, #0f1d47 42%, #0a1536 100%);
 }
 
 .cream-bg {
-  background-color: #FFF8EE;
+  background:
+    linear-gradient(180deg, #fff8ee 0%, #fff4e6 65%, #fff1de 100%);
 }
 
 .warm-bg {
@@ -65,21 +73,33 @@ body {
 
 /* ── Buttons & gradients ── */
 .orange-gradient {
-  background: linear-gradient(135deg, #C9A84C 0%, #E8C97A 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 34%),
+    linear-gradient(135deg, #df8a1f 0%, #f0b456 48%, #f7cf82 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 10px 22px -10px rgba(212, 121, 14, 0.55);
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 36%),
+    linear-gradient(140deg, #be953e 0%, #f1cd79 46%, #c49b44 100%);
 }
 
 .wa-gradient {
-  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 32%),
+    linear-gradient(140deg, #2ad46a 0%, #1fb96e 45%, #188f80 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 10px 20px -10px rgba(16, 128, 88, 0.45);
 }
 
 /* ── Gold decorative strip ── */
 .gold-strip {
   height: 6px;
-  background: linear-gradient(90deg, #8B6914 0%, #C9A84C 20%, #E8C97A 40%, #F5E4A0 50%, #E8C97A 60%, #C9A84C 80%, #8B6914 100%);
+  background: linear-gradient(90deg, #7b5a10 0%, #b8872f 16%, #f1cd79 37%, #fff0bf 50%, #f1cd79 64%, #b8872f 84%, #7b5a10 100%);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 
@@ -112,12 +132,22 @@ body {
 
 /* ── Cards ── */
 .snack-card {
-  transition: transform 0.35s cubic-bezier(.2, .7, .2, 1), box-shadow 0.35s;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.72) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 14px 30px -18px rgba(31, 46, 89, 0.28);
+  backdrop-filter: blur(6px);
+  transition: transform 0.35s cubic-bezier(.2, .7, .2, 1), box-shadow 0.35s, border-color 0.25s;
 }
 
 .snack-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px -15px rgba(30, 45, 90, 0.22), 0 0 0 2px rgba(201, 168, 76, 0.30);
+  transform: translateY(-8px);
+  border-color: rgba(232, 201, 122, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 24px 40px -18px rgba(27, 41, 83, 0.35),
+    0 0 0 1px rgba(226, 188, 102, 0.42);
 }
 
 .float-anim {
@@ -143,4 +173,13 @@ body {
 .scrollbar-thin::-webkit-scrollbar-thumb {
   background: rgba(201, 168, 76, 0.35);
   border-radius: 3px;
+}
+
+.glass-surface {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.64) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 18px 40px -24px rgba(31, 46, 89, 0.35);
+  backdrop-filter: blur(8px);
 }

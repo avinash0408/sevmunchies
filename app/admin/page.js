@@ -15,7 +15,7 @@ import { Lock, Plus, Pencil, Trash2, LogOut, Save, Upload, ArrowLeft, X, Star, C
 import { toast } from 'sonner'
 import Link from 'next/link'
 
-const emptyProduct = { name: '', title: '', description: '', price: '', weight: '250 gms', images: [], badge: '', featured: false }
+const emptyProduct = { name: '', title: '', description: '', ingredients: '', price: '', weight: '250 gms', images: [], badge: '', featured: false }
 const emptyCoupon = { code: '', type: 'percent', value: '', minOrder: '', active: true }
 
 export default function AdminPage() {
@@ -34,6 +34,7 @@ export default function AdminPage() {
   const [couponForm, setCouponForm] = useState(emptyCoupon)
   const [couponEditing, setCouponEditing] = useState(null)
   const [couponOpen, setCouponOpen] = useState(false)
+  const [reviews, setReviews] = useState([])
 
   // settings
   const [settings, setSettings] = useState({ password: '', whatsapp: '', brand: '', address: '', email: '' })
@@ -44,14 +45,16 @@ export default function AdminPage() {
   }, [])
 
   const loadAll = async (p) => {
-    const [pr, st, co] = await Promise.all([
+    const [pr, st, co, rv] = await Promise.all([
       fetch('/api/products').then(r => r.json()),
       fetch('/api/settings').then(r => r.json()),
       fetch('/api/coupons', { headers: { 'x-admin-password': p } }).then(r => r.json()),
+      fetch('/api/admin/reviews', { headers: { 'x-admin-password': p } }).then(r => r.json()),
     ])
     setProducts(pr || [])
     setSettings({ password: '', whatsapp: st.whatsapp || '', brand: st.brand || '', address: st.address || '', email: st.email || '' })
     setCoupons(Array.isArray(co) ? co : [])
+    setReviews(Array.isArray(rv) ? rv : [])
   }
 
   const login = async () => {
@@ -66,13 +69,25 @@ export default function AdminPage() {
 
   // === PRODUCTS ===
   const openNew = () => { setEditing(null); setForm(emptyProduct); setOpen(true) }
-  const openEdit = (p) => { setEditing(p); setForm({ ...emptyProduct, ...p, price: String(p.price), images: p.images || [] }); setOpen(true) }
+  const openEdit = (p) => {
+    const ingredients = Array.isArray(p.ingredients) ? p.ingredients.join(', ') : (p.ingredients || '')
+    setEditing(p)
+    setForm({ ...emptyProduct, ...p, ingredients, price: String(p.price), images: p.images || [] })
+    setOpen(true)
+  }
 
   const saveProduct = async () => {
     if (!form.name || !form.price) { toast.error('Name and price are required'); return }
     const url = editing ? `/api/products/${editing.id}` : '/api/products'
     const method = editing ? 'PUT' : 'POST'
-    const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd }, body: JSON.stringify(form) })
+    const payload = {
+      ...form,
+      ingredients: (form.ingredients || '')
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean),
+    }
+    const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd }, body: JSON.stringify(payload) })
     if (!r.ok) { toast.error('Save failed'); return }
     toast.success(editing ? 'Updated' : 'Added')
     setOpen(false); setForm(emptyProduct)
@@ -167,6 +182,22 @@ export default function AdminPage() {
     loadAll(adminPwd)
   }
 
+  // === REVIEWS ===
+  const deleteReview = async (id) => {
+    if (!confirm('Delete this review?')) return
+    const r = await fetch(`/api/reviews/${id}`, { method: 'DELETE', headers: { 'x-admin-password': adminPwd } })
+    if (!r.ok) { toast.error('Delete failed'); return }
+    toast.success('Review deleted')
+    loadAll(adminPwd)
+  }
+  const deleteAllReviews = async () => {
+    if (!confirm('Delete ALL reviews? This cannot be undone.')) return
+    const r = await fetch('/api/reviews', { method: 'DELETE', headers: { 'x-admin-password': adminPwd } })
+    if (!r.ok) { toast.error('Delete failed'); return }
+    toast.success('All reviews deleted')
+    loadAll(adminPwd)
+  }
+
   // === SETTINGS ===
   const saveSettings = async () => {
     const body = {}
@@ -219,6 +250,7 @@ export default function AdminPage() {
           <TabsList className="mb-6">
             <TabsTrigger value="products">Products ({products.length})</TabsTrigger>
             <TabsTrigger value="coupons">Coupons ({coupons.length})</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -296,6 +328,52 @@ export default function AdminPage() {
           </TabsContent>
 
           {/* SETTINGS TAB */}
+          <TabsContent value="reviews">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="font-display text-2xl font-bold">Customer Reviews</h2>
+              <Button
+                variant="outline"
+                onClick={deleteAllReviews}
+                disabled={reviews.length === 0}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="w-4 h-4 mr-2" /> Delete All
+              </Button>
+            </div>
+            {reviews.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center text-muted-foreground">No reviews yet.</CardContent>
+              </Card>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {reviews.map((review) => (
+                  <Card key={review.id}>
+                    <CardContent className="p-5">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <div className="font-semibold">{review.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {'★'.repeat(Number(review.rating || 0))}{'☆'.repeat(5 - Number(review.rating || 0))}
+                          </div>
+                        </div>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="text-destructive"
+                          onClick={() => deleteReview(review.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{review.message}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* SETTINGS TAB */}
           <TabsContent value="settings">
             <Card className="max-w-xl">
               <CardHeader><CardTitle>Store Settings</CardTitle></CardHeader>
@@ -327,6 +405,15 @@ export default function AdminPage() {
               <div><Label>Badge (optional)</Label><Input value={form.badge} onChange={e => setForm(f => ({ ...f, badge: e.target.value }))} placeholder="Bestseller / New / Hot" /></div>
             </div>
             <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} /></div>
+            <div>
+              <Label>Ingredients (comma separated)</Label>
+              <Textarea
+                value={form.ingredients}
+                onChange={e => setForm(f => ({ ...f, ingredients: e.target.value }))}
+                rows={2}
+                placeholder="Gram flour, salt, red chilli, turmeric, peanut oil"
+              />
+            </div>
 
             <div className="flex items-center gap-3 p-3 bg-muted/40 rounded-lg">
               <Switch checked={form.featured} onCheckedChange={v => setForm(f => ({ ...f, featured: v }))} id="featured" />

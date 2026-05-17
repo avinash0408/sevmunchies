@@ -13,7 +13,13 @@
       ],
       "badge": "Bestseller",
       "featured": true,
-      "createdAt": "2026-05-08T19:42:01.918Z"
+      "createdAt": "2026-05-08T19:42:01.918Z",
+      "ingredients": [
+        "150 gram(1 cup) all-purpose flour\n50 gram(1/4 cup) chapati flour (alternatively",
+        "you can use whole-wheat flour)\n1/4 teaspoonkosher salt\n1/2 teaspoonground turmeric\n1/2 teaspoonchile powder (unsalted; ancho chile or similar)\n1/2 teaspoonchaat masala\n1/2 teaspooncarom seeds (ajwain)",
+        "or caraway seeds\n3 tablespoonghee",
+        "melted\n70 milliliter(1/3 cup) water"
+      ]
     },
     {
       "id": "1daf940b-4b6a-40e8-9860-19b7fba222ae",
@@ -94,9 +100,10 @@
   ],
   "settings": {
     "password": "admin123",
-    "whatsapp": "916303520089",
+    "whatsapp": "917995955054",
     "brand": "Famous Namkeen",
     "address": "Hyderabad, India",
     "email": "orders@sevmunchies.in"
-  }
+  },
+  "reviews": []
 }
