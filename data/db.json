@@ -105,5 +105,13 @@
     "address": "Hyderabad, India",
     "email": "orders@sevmunchies.in"
   },
-  "reviews": []
+  "reviews": [
+    {
+      "id": "31816ed2-db99-4c28-81b0-f9565460eee5",
+      "name": "jay",
+      "rating": 5,
+      "message": "test case",
+      "createdAt": "2026-05-17T15:35:32.564Z"
+    }
+  ]
 }

@@ -246,7 +246,11 @@ export default function App() {
       state,
       address,
       notes,
-      items: cartItems,
+      items: cartItems.map((item) => ({
+        productName: item.name,
+        quantity: item.qty,
+      })),
+      itemsSummary: cartItems.map((item) => `${item.name} x ${item.qty}`).join(', '),
       subtotal: cartSubtotal,
       discount,
       total: cartTotal,

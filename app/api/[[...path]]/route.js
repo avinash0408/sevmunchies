@@ -11,7 +11,10 @@ cloudinary.config({
   secure: true,
 })
 
-const DATA_DIR = path.join(process.cwd(), 'data')
+const PROJECT_DATA_DIR = path.join(process.cwd(), 'data')
+const PROJECT_DB_FILE = path.join(PROJECT_DATA_DIR, 'db.json')
+const IS_SERVERLESS_RUNTIME = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME)
+const DATA_DIR = IS_SERVERLESS_RUNTIME ? '/tmp/sevmunchies-data' : PROJECT_DATA_DIR
 const DB_FILE = path.join(DATA_DIR, 'db.json')
 
 // ---- Initial seed ----
@@ -100,7 +103,15 @@ async function loadDb() {
     cache.reviews ??= []
     cache.settings ??= { ...SEED.settings }
   } catch {
-    cache = JSON.parse(JSON.stringify(SEED))
+    // In serverless runtimes (/var/task is read-only), bootstrap from project seed
+    // and write to /tmp so runtime writes (admin updates) succeed.
+    try {
+      const seedFromProject = await fs.readFile(PROJECT_DB_FILE, 'utf-8')
+      cache = JSON.parse(seedFromProject)
+    } catch {
+      cache = JSON.parse(JSON.stringify(SEED))
+    }
+    await fs.mkdir(DATA_DIR, { recursive: true })
     await fs.writeFile(DB_FILE, JSON.stringify(cache, null, 2))
   }
   return cache
