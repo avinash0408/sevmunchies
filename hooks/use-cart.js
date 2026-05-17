@@ -13,6 +13,18 @@ export function useCart() {
   const [cart, setCart] = useState({})
 
   useEffect(() => {
+    // Clear cart only once per real tab load (refresh/new tab),
+    // not on in-app route navigation remounts.
+    const bootKey = 'sev_cart_bootstrapped'
+    const alreadyBootstrapped = typeof window !== 'undefined' && sessionStorage.getItem(bootKey) === '1'
+
+    if (!alreadyBootstrapped) {
+      writeCart({})
+      setCart({})
+      if (typeof window !== 'undefined') sessionStorage.setItem(bootKey, '1')
+      return
+    }
+
     setCart(readCart())
   }, [])
 
