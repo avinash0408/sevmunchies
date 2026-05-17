@@ -125,6 +125,16 @@ async function saveDb() {
   savePromise = savePromise.then(async () => {
     await fs.mkdir(DATA_DIR, { recursive: true })
     await fs.writeFile(DB_FILE, JSON.stringify(cache, null, 2))
+    // Keep local project file in sync for dev visibility and tooling.
+    // If runtime cannot write here (e.g. serverless read-only), ignore gracefully.
+    if (PROJECT_DB_FILE !== DB_FILE) {
+      try {
+        await fs.mkdir(PROJECT_DATA_DIR, { recursive: true })
+        await fs.writeFile(PROJECT_DB_FILE, JSON.stringify(cache, null, 2))
+      } catch {
+        // no-op
+      }
+    }
   })
   return savePromise
 }
