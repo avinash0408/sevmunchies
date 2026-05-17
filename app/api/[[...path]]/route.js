@@ -13,7 +13,11 @@ cloudinary.config({
 
 const PROJECT_DATA_DIR = path.join(process.cwd(), 'data')
 const PROJECT_DB_FILE = path.join(PROJECT_DATA_DIR, 'db.json')
-const IS_SERVERLESS_RUNTIME = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME)
+// Use /tmp only for actual production serverless runtimes.
+// In local dev we always use project data/db.json so admin edits are visible in the file.
+const IS_SERVERLESS_RUNTIME =
+  process.env.NODE_ENV === 'production' &&
+  Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME)
 const DATA_DIR = IS_SERVERLESS_RUNTIME ? '/tmp/sevmunchies-data' : PROJECT_DATA_DIR
 const DB_FILE = path.join(DATA_DIR, 'db.json')
 
