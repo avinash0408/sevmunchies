@@ -11,6 +11,18 @@ cloudinary.config({
   secure: true,
 })
 
+const getMissingCloudinaryVars = () => {
+  const required = [
+    'CLOUDINARY_CLOUD_NAME',
+    'CLOUDINARY_API_KEY',
+    'CLOUDINARY_API_SECRET',
+  ]
+  return required.filter((key) => {
+    const value = process.env[key]
+    return !value || String(value).trim().length === 0
+  })
+}
+
 const PROJECT_DATA_DIR = path.join(process.cwd(), 'data')
 const PROJECT_DB_FILE = path.join(PROJECT_DATA_DIR, 'db.json')
 // Use /tmp only for actual production serverless runtimes.
@@ -163,6 +175,17 @@ async function handler(request, { params }) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       }
       try {
+        const missingCloudinaryVars = getMissingCloudinaryVars()
+        if (missingCloudinaryVars.length > 0) {
+          return NextResponse.json(
+            {
+              error: 'Cloudinary credentials missing in environment',
+              missing: missingCloudinaryVars,
+            },
+            { status: 500 }
+          )
+        }
+
         const formData = await request.formData()
         const file = formData.get('file')
         if (!file || typeof file === 'string') return NextResponse.json({ error: 'No file' }, { status: 400 })
